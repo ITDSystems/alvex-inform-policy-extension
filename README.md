@@ -1,10 +1,18 @@
 # alfresco-inform-policy-extension-repo v0.6
 
-Расширение для Alfresco 5.0 и выше, которое уведомляет заинтересованных пользователей об изменении документов. 
+An Alfresco 5.0 extension. Informs interested users about document updates. 
 
-Механика работы:
-После создания документа всем пользователям, которые тем или иным способом связаны с документом, отправляются письма по шаблонам. На данный момент поддерживаются шаблоны "Создатель", "Последний редактор", "Редактор", "Связанные пользователи".
+### Installation
+For Linux
+* Clone the repo
+* Run $mvn install from the root (make sure that you have maven and jdk8 installed)
+* Copy the .amp file from target/ into {alfresco-directory}/amps/
+* Run $./{alfresco-directory/bin/apply_amps.sh
 
-В планах:
-Тесты
-Группа "Заинтересованный" - человек, у коготорого документ добавлен в "Избранное".
+### How it works
+Extension contains AfterCreateVersionPolicy implementation, that collect all users in groups "Creator", "Last edtor", "Associated", "Editors" and informs them with emails if flag for group is "true".
+
+### TODO:
+* Test.
+* Email metadata customising.
+* "In Favorite" group.
