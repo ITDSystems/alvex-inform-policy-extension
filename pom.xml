@@ -64,6 +64,58 @@
     </dependencies>
 
     <profiles>
+        <profile>
+            <id>development</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>2.7</version>
+                        <executions>
+                            <execution>
+                                <id>copy-model</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>target/alfresco-inform-repo/config/alfresco/extension/models/</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/test/resources/alfresco/extension/models/</directory>
+                                            <includes>
+                                                <include>test-content-model.xml</include>
+                                            </includes>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                              </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-model-context</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>target/alfresco-inform-repo/config/alfresco/module/alfresco-inform-repo/context/</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/test/resources/alfresco/extension/</directory>
+                                            <includes>
+                                                <include>test-model-bootstrap-context.xml</include>
+                                            </includes>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                              </configuration>
+                            </execution>
+                        </executions>
+                  </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <!--
             Brings in the extra Enterprise specific repository classes,
             if the 'enterprise' profile has been activated, needs to be activated manually.
