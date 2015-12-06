@@ -98,9 +98,11 @@ public class InformPolicy
         fortemplate.put("lasteditorname", lasteditorname);
         fortemplate.put("creatorname", creatorname);
 
+        logger.debug("Notifying users about new version of the document");
+
         // Version creator
         if (creator) {
-            logger.debug("creator");
+            logger.debug("Notifying creator of the document");
             NodeRef mailCreatorTemplate = getMailTemplate(templates.get("creator"));
             sendMail(creatorname, mailCreatorTemplate, fortemplate);
             informedUsers.add(creatorname);
@@ -108,7 +110,7 @@ public class InformPolicy
 
         // Last editor
         if (lasteditor) {
-            logger.debug("lasteditor");
+            logger.debug("Notifying last editor of the document");
             if (!informedUsers.contains(lasteditorname)) {
                 NodeRef mailLastEditorTemplate = getMailTemplate(templates.get("lasteditor"));
                 sendMail(lasteditorname, mailLastEditorTemplate, fortemplate);
@@ -118,7 +120,7 @@ public class InformPolicy
 
         // All associated
         if (associated) {
-            logger.debug("associated");
+            logger.debug("Notifying users associated with the document");
             HashSet<String> associatedusernames = getAssociatedUsers(versionableNode);
             associatedusernames.removeAll(informedUsers);
             if (associatedusernames.size() > 0) {
@@ -133,7 +135,7 @@ public class InformPolicy
 
         // All editors
         if (editors) {
-            logger.debug("editors");
+            logger.debug("Notifying all previous editors of the document");
             HashSet<String> editornames = getEditors(versionableNode);
             editornames.removeAll(informedUsers);
             if (editornames.size() > 0) {
@@ -158,21 +160,21 @@ public class InformPolicy
 
     private String getDocumentCreator(NodeRef document)
     {
-        logger.debug("Inform owner");
+        logger.debug("Getting creator for the document");
         String owner = (String) nodeService.getProperty(document, ContentModel.PROP_CREATOR);
         return owner;
     }
 
     private String getLastEditor(Version version)
     {
-        logger.debug("Inform owner");
+        logger.debug("Getting last editor for the document");
         String editor = (String) version.getVersionProperty("creator");
         return editor;
     }
 
     private HashSet<String> getEditors(NodeRef document)
     {
-        logger.debug("Inform Authors");
+        logger.debug("Getting complete editors history for the document");
         VersionHistory versionHistory = versionService.getVersionHistory(document);
         ArrayList<Version> allVersions = new ArrayList(versionHistory.getAllVersions());
 
@@ -186,7 +188,7 @@ public class InformPolicy
 
     private HashSet<String> getAssociatedUsers(NodeRef versionableNode)
     {
-        logger.debug("Inform Associated Users");
+        logger.debug("Getting associated users for the document");
         HashSet <String> associatedUsers = new HashSet<>();
         ArrayList<AssociationRef> associationsTarget = (ArrayList<AssociationRef>) nodeService.getTargetAssocs(versionableNode, RegexQNamePattern.MATCH_ALL);
         for (AssociationRef assoc: associationsTarget)
@@ -201,7 +203,7 @@ public class InformPolicy
 
     private NodeRef getMailTemplate(String templatePATH) throws AlfrescoRuntimeException
     {
-        logger.debug("sendMails");
+        logger.debug("Getting mail templates from repository");
         ResultSet resultSet = serviceRegistry.getSearchService().query(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore") , SearchService.LANGUAGE_LUCENE, templatePATH);
         if (resultSet.length() == 0) {
             // Cause we have no better solution. Because policy works
@@ -216,6 +218,8 @@ public class InformPolicy
     private void sendMail(String username, NodeRef emailTemplateNodeRef, HashMap<String, Serializable> fortemplate) throws AlfrescoRuntimeException
     {
         logger.debug("sendMail");
+        // Exit gracefully on missing template, since we can crash Alfresco startup otherwise.
+        // It happens because startup procedure may bootstrap content, triggering our policy.
         if (null == emailTemplateNodeRef) {
             // Cause we have no better solution - 2.
             logger.error("Can't send email notification! Bad template node!");
