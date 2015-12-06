@@ -3,12 +3,12 @@
            xmlns:cm="http://www.alfresco.org/model/content/1.0"
            xmlns:app="http://www.alfresco.org/model/application/1.0">
 
-    <cm:folder view:childName="cm:InformTest">
+    <cm:folder view:childName="cm:document_change_notification">
         <app:uifacets />
-        <cm:name>InformTest</cm:name>
+        <cm:name>Document Change Notification</cm:name>
         <app:icon>space-icon-default</app:icon>
         <cm:title></cm:title>
-        <cm:description>Inform Policy extension folder.</cm:description>
+        <cm:description>Email Templates for Document Change Notification Policy</cm:description>
         <cm:contains>
             <cm:content view:childName="cm:inform_mail_template_creator.html.ftl">
                 <view:aspects>
