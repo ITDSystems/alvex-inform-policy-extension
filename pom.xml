@@ -5,9 +5,9 @@
     <groupId>com.itdhq</groupId>
     <artifactId>alfresco-inform-repo</artifactId>
     <version>0.7-SNAPSHOT</version>
-    <name>alfresco-inform-repo policy</name>
+    <name>Document Change Notification Policy</name>
     <packaging>amp</packaging>
-    <description>Informing all interested users about changes in tracking file.</description>
+    <description>Informs all interested users about changes in tracked files</description>
 
     <parent>
         <groupId>org.alfresco.maven</groupId>
