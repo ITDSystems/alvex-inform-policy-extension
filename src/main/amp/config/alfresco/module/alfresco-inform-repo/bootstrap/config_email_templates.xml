@@ -19,7 +19,7 @@
                 <view:properties>
                     <app:editInline>true</app:editInline>
                     <cm:description>This is a custom email template.</cm:description>
-                    <cm:content>contentUrl=classpath:alfresco/extension/templates/email_templates/inform_mail_template_creator.html.ftl|mimetype=text/plain|size=|encoding=UTF-8|locale=en_US_</cm:content>
+                    <cm:content>contentUrl=classpath:alfresco/module/alfresco-inform-repo/email_templates/inform_mail_template_creator.html.ftl|mimetype=text/plain|size=|encoding=UTF-8|locale=en_US_</cm:content>
                     <cm:title>Inform template for creator of document.</cm:title>
                     <cm:author>InformPolicy</cm:author>
                     <cm:name>inform_mail_template_creator.html.ftl</cm:name>
@@ -35,7 +35,7 @@
                 <view:properties>
                     <app:editInline>true</app:editInline>
                     <cm:description>This is a custom email template.</cm:description>
-                    <cm:content>contentUrl=classpath:alfresco/extension/templates/email_templates/inform_mail_template_lasteditor.html.ftl|mimetype=text/plain|size=|encoding=UTF-8|locale=en_US_</cm:content>
+                    <cm:content>contentUrl=classpath:alfresco/module/alfresco-inform-repo/email_templates/inform_mail_template_lasteditor.html.ftl|mimetype=text/plain|size=|encoding=UTF-8|locale=en_US_</cm:content>
                     <cm:title>Inform template for last editor of document.</cm:title>
                     <cm:author>InformPolicy</cm:author>
                     <cm:name>inform_mail_template_lasteditor.html.ftl</cm:name>
@@ -51,7 +51,7 @@
                 <view:properties>
                     <app:editInline>true</app:editInline>
                     <cm:description>This is a custom email template.</cm:description>
-                    <cm:content>contentUrl=classpath:alfresco/extension/templates/email_templates/inform_mail_template_editors.html.ftl|mimetype=text/plain|size=|encoding=UTF-8|locale=en_US_</cm:content>
+                    <cm:content>contentUrl=classpath:alfresco/module/alfresco-inform-repo/email_templates/inform_mail_template_editors.html.ftl|mimetype=text/plain|size=|encoding=UTF-8|locale=en_US_</cm:content>
                     <cm:title>Inform template for all editors of document.</cm:title>
                     <cm:author>InformPolicy</cm:author>
                     <cm:name>inform_mail_template_editors.html.ftl</cm:name>
@@ -67,7 +67,7 @@
                 <view:properties>
                     <app:editInline>true</app:editInline>
                     <cm:description>This is a custom email template.</cm:description>
-                    <cm:content>contentUrl=classpath:alfresco/extension/templates/email_templates/inform_mail_template_associated.html.ftl|mimetype=text/plain|size=|encoding=UTF-8|locale=en_US_</cm:content>
+                    <cm:content>contentUrl=classpath:alfresco/module/alfresco-inform-repo/email_templates/inform_mail_template_associated.html.ftl|mimetype=text/plain|size=|encoding=UTF-8|locale=en_US_</cm:content>
                     <cm:title>Inform template for all users associated with document.</cm:title>
                     <cm:author>InformPolicy</cm:author>
                     <cm:name>inform_mail_template_associated.html.ftl</cm:name>
