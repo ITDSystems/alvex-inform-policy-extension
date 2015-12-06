@@ -23,7 +23,7 @@
 ## Пишем
 Все примеры будут даваться с учетом того, что я писал в IntelliJ IDEA Community Edition потому что так сложилось.
 
-Для начала нам понадобится JDK (в моем случае openjdk 1.8) и maven. Создаем с помощью Alfresco SDK [tutorial][2] создаем новый Repo Project, выбираем версию 2.1.1, обзываем его как удобнее и получаем что-то типа.
+Для начала нам понадобится JDK (в моем случае openjdk 1.8) и maven. С помощью Alfresco SDK (хороший [tutorial][2]) создаем новый Repo Project, выбираем версию 2.1.1, обзываем его как удобнее и получаем что-то типа.
 <img> </img>
 После чистки от всякого разного остается
 <img> </img>
@@ -127,12 +127,11 @@
 <img/>
 It works!
 
-В планах: 
-	* Добваить поддержку локализации средствами Alfresco
-	* Добавить хотя бы один тест
-
-Ссылки:
-[1]:http://jared.ottleys.net/alfresco/alfresco-max-version-policy/
-[2]:http://ecmarchitect.com/alfresco-developer-series-tutorials/maven-sdk/tutorial/tutorial.html
+В планах:
+* Добваить поддержку локализации средствами Alfresco
+* Добавить хотя бы один тест
 
 You should have flag mail.from.enabled set to true!!!!!11111ONEONE
+
+[1]:http://jared.ottleys.net/alfresco/alfresco-max-version-policy/
+[2]:http://ecmarchitect.com/alfresco-developer-series-tutorials/maven-sdk/tutorial/tutorial.html
