@@ -205,13 +205,19 @@ public class InformPolicy
         logger.debug("Getting mail templates from repository");
         ResultSet resultSet = serviceRegistry.getSearchService().query(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore") , SearchService.LANGUAGE_LUCENE, templatePATH);
         if (resultSet.length() == 0) {
-            throw new AlfrescoRuntimeException("Can't find email template!");
+            return null;
         }
         return resultSet.getNodeRef(0);
     }
 
     private void sendMail(String username, NodeRef emailTemplateNodeRef, HashMap<String, Serializable> fortemplate) throws AlfrescoRuntimeException
     {
+        // Exit gracefully on missing template, since we can crash Alfresco startup otherwise.
+        // It happens because startup procedure may bootstrap content, triggering our policy.
+        if(emailTemplateNodeRef == null) {
+            logger.error("Can't send email notification! Got empty email template!");
+            return;
+        }
         logger.debug("Sending notification to " + username);
         try {
             Action mailAction = actionService.createAction(MailActionExecuter.NAME);
