@@ -124,7 +124,7 @@ public class InformPolicy
             HashSet<String> associatedusernames = getAssociatedUsers(versionableNode);
             associatedusernames.removeAll(informedUsers);
             if (associatedusernames.size() > 0) {
-                NodeRef mailAssociatedTemplate = getMailTemplate(templates.get(associated));
+                NodeRef mailAssociatedTemplate = getMailTemplate(templates.get("associated"));
                 for (String user: associatedusernames)
                 {
                     sendMail(user, mailAssociatedTemplate, fortemplate);
