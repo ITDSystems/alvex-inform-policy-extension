@@ -5,9 +5,9 @@
     <groupId>com.itdhq</groupId>
     <artifactId>alfresco-inform-repo</artifactId>
     <version>0.7-SNAPSHOT</version>
-    <name>alfresco-inform-repo policy</name>
+    <name>Document Change Notification Policy</name>
     <packaging>amp</packaging>
-    <description>Informing all interested users about changes in tracking file.</description>
+    <description>Informs all interested users about changes in tracked files</description>
 
     <parent>
         <groupId>org.alfresco.maven</groupId>
@@ -22,7 +22,7 @@
        -->
     <properties>
           <alfresco.version>5.0.d</alfresco.version>
-          <alfresco.data.location>/absolute/path/to/alf_data_dev</alfresco.data.location>
+          <alfresco.data.location>./alf_data_dev</alfresco.data.location>
 
         <!-- This control the root logging level for all apps uncomment and change, defaults to WARN
             <app.log.root.level>WARN</app.log.root.level>
