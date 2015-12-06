@@ -5,8 +5,19 @@ package com.itdhq.inform.policy.test;
  */
 /*
 import junit.framework.TestCase;
+import org.alfresco.service.cmr.version.VersionService;
+import org.alfresco.util.ApplicationContextHelper;
+import org.springframework.context.ApplicationContext;
 
 public class InformPolicyTest extends TestCase
 {
+    private ApplicationContext applicationContext = ApplicationContextHelper.getApplicationContext();
+    private VersionService versionService;
+
+    @Override
+    protected void setUp()
+    {
+        versionService = (VersionService)applicationContext.getBean("versionService");
+    }
 }
 */

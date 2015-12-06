@@ -23,6 +23,7 @@ import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
 
 import java.io.Serializable;
@@ -203,7 +204,11 @@ public class InformPolicy
         logger.debug("sendMails");
         ResultSet resultSet = serviceRegistry.getSearchService().query(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore") , SearchService.LANGUAGE_LUCENE, templatePATH);
         if (resultSet.length() == 0) {
-            throw new AlfrescoRuntimeException("Can't find email template!");
+            // Cause we have no better solution. Because policy works
+            // during deployment of system exception causes crash.
+            //throw new AlfrescoRuntimeException("Can't find email template!");
+            logger.error("Template node not found!");
+            return null;
         }
         return resultSet.getNodeRef(0);
     }
@@ -211,6 +216,11 @@ public class InformPolicy
     private void sendMail(String username, NodeRef emailTemplateNodeRef, HashMap<String, Serializable> fortemplate) throws AlfrescoRuntimeException
     {
         logger.debug("sendMail");
+        if (null == emailTemplateNodeRef) {
+            // Cause we have no better solution - 2.
+            logger.error("Can't send email notification! Bad template node!");
+            return;
+        }
         try {
             Action mailAction = actionService.createAction(MailActionExecuter.NAME);
             mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, emailTemplateNodeRef);
