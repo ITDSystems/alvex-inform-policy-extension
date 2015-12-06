@@ -41,6 +41,13 @@
             <ref bean="ServiceRegistry" />
         </property>
 
+        <property name="mailfrom">
+            <value>${mail.from}</value>
+        </property>
+        <property name="subject">
+            <value>${mail.subject}</value>
+        </property>
+
         <property name="creator">
             <value>${creator}</value>
         </property>
@@ -53,5 +60,11 @@
         <property name="associated">
             <value>${associated}</value>
         </property>
+        <!---
+
+                <property name="infavorites">
+                    <value>${infavorites}</value>
+                </property>
+        -->
     </bean>
 </beans>

@@ -42,29 +42,44 @@ public class InformPolicy
     private ServiceRegistry serviceRegistry;
     private ActionService actionService;
 
+    private HashMap<String, String> templates;
+    private String mailfrom;
+    private String subject;
     private boolean creator;
     private boolean lasteditor;
     private boolean editors;
     private boolean associated;
+    //private boolean infavorites;
 
     public void setVersionService(VersionService versionService) {this.versionService = versionService; }
     public void setNodeService(NodeService nodeService) {this.nodeService = nodeService; }
     public void setPersonService(PersonService personService) {this.personService = personService; }
     public void setActionService(ActionService actionService) {this.actionService = actionService; }
     public void setPolicyComponent(PolicyComponent policyComponent) {this.policyComponent = policyComponent; }
-    public void setServiceRegistry(ServiceRegistry serviceRegistry) {this.serviceRegistry = serviceRegistry;  }
+    public void setServiceRegistry(ServiceRegistry serviceRegistry) {this.serviceRegistry = serviceRegistry; }
 
 
+    public void setMailfrom(String mailfrom) {this.mailfrom = mailfrom; }
+    public void setSubject(String subject) {this.subject = subject; }
     public void setCreator(boolean creator) {this.creator = creator; }
     public void setLasteditor(boolean lasteditor) {this.lasteditor = lasteditor; }
     public void setEditors(boolean editors) {this.editors = editors; }
     public void setAssociated(boolean associated) {this.associated = associated; }
+    //public void setInfavorites(boolean infavorites) {this.infavorites = infavorites; }
 
     public void init()
     {
         logger.debug("Inform policy is online.");
         Behaviour afterCreateVersionBehaviour = new JavaBehaviour(this, "afterCreateVersion", Behaviour.NotificationFrequency.TRANSACTION_COMMIT);
         this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "afterCreateVersion"), InformPolicy.class, afterCreateVersionBehaviour);
+
+        // Cause we already know where our templates are TODO change comment
+        templates = new HashMap<>(5);
+        templates.put("creator", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_creator.html.ftl\"");
+        templates.put("lasteditor", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_lasteditor.html.ftl\"");
+        templates.put("associated", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_associated.html.ftl\"");
+        templates.put("editors", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_editors.html.ftl\"");
+        //templates.put("infavorites", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_infavorites.html.ftl\"");
     }
 
     @Override
@@ -85,7 +100,7 @@ public class InformPolicy
         // Version creator
         if (creator) {
             logger.debug("creator");
-            NodeRef mailCreatorTemplate = getMailTemplate("PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_creator.html.ftl\"");
+            NodeRef mailCreatorTemplate = getMailTemplate(templates.get("creator"));
             sendMail(creatorname, mailCreatorTemplate, fortemplate);
             informedUsers.add(creatorname);
         }
@@ -94,7 +109,7 @@ public class InformPolicy
         if (lasteditor) {
             logger.debug("lasteditor");
             if (!informedUsers.contains(lasteditorname)) {
-                NodeRef mailLastEditorTemplate = getMailTemplate("PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_lasteditor.html.ftl\"");
+                NodeRef mailLastEditorTemplate = getMailTemplate(templates.get("lasteditor"));
                 sendMail(lasteditorname, mailLastEditorTemplate, fortemplate);
                 informedUsers.add(lasteditorname);
             }
@@ -106,7 +121,7 @@ public class InformPolicy
             HashSet<String> associatedusernames = getAssociatedUsers(versionableNode);
             associatedusernames.removeAll(informedUsers);
             if (associatedusernames.size() > 0) {
-                NodeRef mailAssociatedTemplate = getMailTemplate("PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_associated.html.ftl\"");
+                NodeRef mailAssociatedTemplate = getMailTemplate(templates.get(associated));
                 for (String user: associatedusernames)
                 {
                     sendMail(user, mailAssociatedTemplate, fortemplate);
@@ -121,7 +136,7 @@ public class InformPolicy
             HashSet<String> editornames = getEditors(versionableNode);
             editornames.removeAll(informedUsers);
             if (editornames.size() > 0) {
-                NodeRef mailEditorsTemplate = getMailTemplate("PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_editors.html.ftl\"");
+                NodeRef mailEditorsTemplate = getMailTemplate(templates.get("editors"));
                 for (String user: editornames)
                 {
                     sendMail(user, mailEditorsTemplate, fortemplate);
@@ -184,7 +199,6 @@ public class InformPolicy
     }
 
     private NodeRef getMailTemplate(String templatePATH) throws AlfrescoRuntimeException
-
     {
         logger.debug("sendMails");
         ResultSet resultSet = serviceRegistry.getSearchService().query(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore") , SearchService.LANGUAGE_LUCENE, templatePATH);
@@ -200,8 +214,8 @@ public class InformPolicy
         try {
             Action mailAction = actionService.createAction(MailActionExecuter.NAME);
             mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, emailTemplateNodeRef);
-            mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, "Test");
-            mailAction.setParameterValue(MailActionExecuter.PARAM_FROM, "alfresco@itdhq.com");
+            mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
+            mailAction.setParameterValue(MailActionExecuter.PARAM_FROM, mailfrom);
             mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, username);
 
             // Here begins magic!

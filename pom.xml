@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.itdhq</groupId>
     <artifactId>alfresco-inform-repo</artifactId>
-    <version>0.6-SNAPSHOT</version>
+    <version>0.7-SNAPSHOT</version>
     <name>alfresco-inform-repo policy</name>
     <packaging>amp</packaging>
     <description>Informing all interested users about changes in tracking file.</description>
