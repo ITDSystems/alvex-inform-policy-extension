@@ -23,6 +23,6 @@ Extension contains AfterCreateVersionPolicy implementation, that collect all use
 ### DONE
 * Email metadata customising.
 * Correct exceptions and checks
-* Check templates in init (hard to make, dropped)
+* ~~Check templates in init~~ (hard to make, dropped)
 
 Now you can set prefered Subject and From in global properties of extension. Also, extension changed in way to make it safer for errors.
