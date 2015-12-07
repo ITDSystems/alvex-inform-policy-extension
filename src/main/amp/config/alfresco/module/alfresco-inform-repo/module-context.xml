@@ -19,7 +19,7 @@
 
 <beans>
 	<!-- This is filtered by Maven at build time, so that module name is single sourced. -->
-    <import resource="classpath:alfresco/module/${project.artifactId}/context/bootstrap-context.xml" />
+    <import resource="classpath:alfresco/module/${project.artifactId}/context/*-context.xml" />
 
     <bean id="com.itdhq-${project.artifactId}-InformPolicy" class="com.itdhq.inform.policy.InformPolicy" init-method="init">
         <property name="policyComponent">

@@ -12,6 +12,18 @@ For Linux
 ### How it works
 Extension contains AfterCreateVersionPolicy implementation, that collect all users in groups "Creator", "Last edtor", "Associated", "Editors" and informs them with emails if flag for group is "true".
 
+### Development build
+You'll need test models with cm:person assocs for developemnt and debug. Sample model and context for it are located under **src/test/resources/alfresco/extension/**.
+* Running embedded Tomcat with `./run.sh` activates it automatically.
+* If you need a debug amp to run on external Alfresco, build it with `mvn -Pdevelopment clean package`
+* On Share side edit **share-config-custom.xml** to include into **<types/>** section something like this:
+```xml
+         <type name="cm:content">
+               <subtype name="myc:assocs" />
+         </type>
+```
+* After that you can "Change type" of any file into custom **myc:assocs** to get cm:person assocs for debug purposes.
+
 ### TODO:
 * Test.
 * Check configured outbound mail from init

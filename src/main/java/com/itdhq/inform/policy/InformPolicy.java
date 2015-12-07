@@ -124,7 +124,7 @@ public class InformPolicy
             HashSet<String> associatedusernames = getAssociatedUsers(versionableNode);
             associatedusernames.removeAll(informedUsers);
             if (associatedusernames.size() > 0) {
-                NodeRef mailAssociatedTemplate = getMailTemplate(templates.get(associated));
+                NodeRef mailAssociatedTemplate = getMailTemplate(templates.get("associated"));
                 for (String user: associatedusernames)
                 {
                     sendMail(user, mailAssociatedTemplate, fortemplate);
@@ -217,7 +217,7 @@ public class InformPolicy
 
     private void sendMail(String username, NodeRef emailTemplateNodeRef, HashMap<String, Serializable> fortemplate) throws AlfrescoRuntimeException
     {
-        logger.debug("sendMail");
+        logger.debug("Sending notification to " + username);
         // Exit gracefully on missing template, since we can crash Alfresco startup otherwise.
         // It happens because startup procedure may bootstrap content, triggering our policy.
         if (null == emailTemplateNodeRef) {
