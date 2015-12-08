@@ -8,7 +8,7 @@
 		 workflow, and loading custom content models.  -->
 
     <!-- Bootstrap -->
-    <bean id="com.itdhq-${project.artifactId}-bootstrap"
+    <bean id="com.itdhq-bootstrap"
             class="org.alfresco.repo.module.ImporterModuleComponent" parent="module.baseComponent">
         <!-- Module properties -->
         <property name="moduleId" value="${project.artifactId}" />
