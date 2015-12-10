@@ -76,11 +76,11 @@ public class InformPolicy
 
         // Cause we already know where our templates are TODO change comment
         templates = new HashMap<>(5);
-        templates.put("creator", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_creator.html.ftl\"");
-        templates.put("lasteditor", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_lasteditor.html.ftl\"");
-        templates.put("associated", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_associated.html.ftl\"");
-        templates.put("editors", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_editors.html.ftl\"");
-        //templates.put("infavorites", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:InformTest/cm:inform_mail_template_infavorites.html.ftl\"");
+        templates.put("creator", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_creator.html.ftl\"");
+        templates.put("lasteditor", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_lasteditor.html.ftl\"");
+        templates.put("associated", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_associated.html.ftl\"");
+        templates.put("editors", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_editors.html.ftl\"");
+        //templates.put("infavorites", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_infavorites.html.ftl\"");
     }
 
     @Override
@@ -98,7 +98,7 @@ public class InformPolicy
         fortemplate.put("lasteditorname", lasteditorname);
         fortemplate.put("creatorname", creatorname);
 
-        logger.debug("Notifying users about new version of the document");
+        logger.debug("Notifying users about new version of the document :" + nodeService.getProperty(versionableNode, ContentModel.PROP_NAME));
 
         // Version creator
         if (creator) {
@@ -137,6 +137,7 @@ public class InformPolicy
         if (editors) {
             logger.debug("Notifying all previous editors of the document");
             HashSet<String> editornames = getEditors(versionableNode);
+            logger.debug("Editors :" + editornames.toString());
             editornames.removeAll(informedUsers);
             if (editornames.size() > 0) {
                 NodeRef mailEditorsTemplate = getMailTemplate(templates.get("editors"));
@@ -156,6 +157,7 @@ public class InformPolicy
             informInFavoritesdUsers(versionableNode);
         }
         */
+        logger.debug(informedUsers.toString());
     }
 
     private String getDocumentCreator(NodeRef document)
@@ -204,7 +206,7 @@ public class InformPolicy
     private NodeRef getMailTemplate(String templatePATH) throws AlfrescoRuntimeException
     {
         logger.debug("Getting mail templates from repository");
-        ResultSet resultSet = serviceRegistry.getSearchService().query(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore") , SearchService.LANGUAGE_LUCENE, templatePATH);
+        ResultSet resultSet = serviceRegistry.getSearchService().query(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore"), SearchService.LANGUAGE_LUCENE, templatePATH);
         if (resultSet.length() == 0) {
             // Cause we have no better solution. Because policy works
             // during deployment of system exception causes crash.
