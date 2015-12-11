@@ -98,6 +98,9 @@ public class InformPolicyTest extends TestCase
     @Autowired
     @Qualifier("ContentService")
     private ContentService contentService;
+    
+    @Autowired
+    private ApplicationContext ctx;
 
     @Test
     public void testWiring()
@@ -111,14 +114,11 @@ public class InformPolicyTest extends TestCase
     {
         log.debug("before");
 
-        ApplicationContext context = ApplicationContextHelper.getApplicationContext();
-        ACTION_EXECUTER = context.getBean("OutboundSMTP", ApplicationContextFactory.class).getApplicationContext().getBean("mail", MailActionExecuter.class);
-
-        if (null != ACTION_EXECUTER) {
-            log.debug(ACTION_EXECUTER.toString());
-        }
+        ACTION_EXECUTER = ctx.getBean("OutboundSMTP", ApplicationContextFactory.class)
+                .getApplicationContext().getBean("mail", MailActionExecuter.class);
         WAS_IN_TEST_MODE = ACTION_EXECUTER.isTestMode();
         ACTION_EXECUTER.setTestMode(true);
+        ACTION_EXECUTER.resetTestSentCount();
 
         /*
         InputStream in = this.getClass().getClassLoader()
@@ -237,10 +237,8 @@ public class InformPolicyTest extends TestCase
             log.debug("Versions : " + (String) version.getVersionProperty("creator"));
         }
 
-
-        //TODO FUCKING HARD BITCH!!!!!
-        //MimeMessage message = ACTION_EXECUTER.retrieveLastTestMessage();
-        //Assert.assertNotNull(message);
+        int numberOfMessages = ACTION_EXECUTER.getTestSentCount();
+        Assert.assertEquals("Correct number of messages during the test", 8, numberOfMessages);
     }
 
     @After
