@@ -44,5 +44,5 @@ This extension allows you to inform users about changes in related documents. Al
  * ***associated*** (booolean) - same for everyone in target associations of document
  * ***editors*** (booolean) - and for version creators
 
-Once again: you should set them before compiling .amp file!
+Once again: ***you should set them before compiling .amp file!***
 After starting Alfresco with installed extension you can find email templates at ***dictionary/Email Templates/Document Change Notification/*** in repository and customize them if you need.
