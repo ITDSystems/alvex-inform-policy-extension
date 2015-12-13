@@ -64,7 +64,7 @@ public class InformPolicyTest extends TestCase
     private NodeRef parentFolder;
     private ArrayList<NodeRef> users;
 
-    private MailActionExecuter ACTION_EXECUTER;
+    private MailActionExecuter ACTION_EXECUTOR;
     private Boolean WAS_IN_TEST_MODE;
 
     @Autowired
@@ -99,27 +99,20 @@ public class InformPolicyTest extends TestCase
     @Qualifier("ContentService")
     private ContentService contentService;
 
-    @Test
-    public void testWiring()
-    {
-        log.debug("testWiring");
-        assertNotNull(informPolicy);
-    }
-
     @Before
     public void before()
     {
         log.debug("before");
 
         ApplicationContext context = ApplicationContextHelper.getApplicationContext();
-        ACTION_EXECUTER = context.getBean("OutboundSMTP", ApplicationContextFactory.class).getApplicationContext().getBean("mail", MailActionExecuter.class);
+        ACTION_EXECUTOR = context.getBean("OutboundSMTP", ApplicationContextFactory.class).getApplicationContext().getBean("mail", MailActionExecuter.class);
 
-        if (null != ACTION_EXECUTER) {
-            log.debug(ACTION_EXECUTER.toString());
+        WAS_IN_TEST_MODE = ACTION_EXECUTOR.isTestMode();
+        ACTION_EXECUTOR.setTestMode(true);
+
+        if (null != ACTION_EXECUTOR) {
+            log.debug(ACTION_EXECUTOR.toString());
         }
-        WAS_IN_TEST_MODE = ACTION_EXECUTER.isTestMode();
-        ACTION_EXECUTER.setTestMode(true);
-
         /*
         InputStream in = this.getClass().getClassLoader()
                 .getResourceAsStream("alfresco/application-context.xml");
@@ -140,6 +133,30 @@ public class InformPolicyTest extends TestCase
         users.add(createUser("user2", "User2", "Associated", "user2_associated@test.com", "password"));
         users.add(createUser("user3", "User3", "Editor", "user3_editor@test.com", "password"));
         //users.add(createUser("user4", "User4", "InFavorites", "user4_infavorits@test.com", "password"));
+
+    }
+
+    @After
+    public void after()
+    {
+        log.debug("after");
+        for (NodeRef user: users)
+        {
+            personService.deletePerson(user);
+        }
+        fileFolderService.delete(document);
+        fileFolderService.delete(parentFolder);
+        if (users != null) {
+            users.clear();
+        }
+        ACTION_EXECUTOR.setTestMode(WAS_IN_TEST_MODE);
+    }
+
+    @Test
+    public void mainTestCase()
+    {
+        log.debug("mainTestCase");
+        log.debug((new Boolean(ACTION_EXECUTOR.isTestMode())).toString());
 
         // Generating document
         transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionHelper.RetryingTransactionCallback<Void>()
@@ -192,22 +209,21 @@ public class InformPolicyTest extends TestCase
                 return null;
             }
         });
-    }
-
-
-    @Test
-    public void mainTestCase()
-    {
-        log.debug("mainTestCase");
         log.debug(versionService.getCurrentVersion(document).getVersionProperties().toString());
 
-        Map<String, Serializable> versionProperties = new HashMap<>();
+        MimeMessage message = ACTION_EXECUTOR.retrieveLastTestMessage();
+        Assert.assertNotNull(message);
+        Map<String, Serializable> versionProperties;
+        versionProperties = new HashMap<>();
         versionProperties.put("initialVersion", false);
         versionProperties.put("versionType", VersionType.MINOR);
         versionProperties.put("creator", nodeService.getProperty(users.get(3), ContentModel.PROP_USERNAME));
         versionProperties.put("modifier", nodeService.getProperty(users.get(3), ContentModel.PROP_USERNAME));
         versionService.createVersion(document, versionProperties);
         log.debug(versionService.getCurrentVersion(document).getVersionProperties().toString());
+
+        message = ACTION_EXECUTOR.retrieveLastTestMessage();
+        Assert.assertNotNull(message);
 
         versionProperties.clear();
         versionProperties = new HashMap<>();
@@ -217,7 +233,8 @@ public class InformPolicyTest extends TestCase
         versionProperties.put("modifier", nodeService.getProperty(users.get(1), ContentModel.PROP_USERNAME));
         versionService.createVersion(document, versionProperties);
         log.debug(versionService.getCurrentVersion(document).getVersionProperties().toString());
-
+        message = ACTION_EXECUTOR.retrieveLastTestMessage();
+        Assert.assertNotNull(message);
 
         versionProperties.clear();
         versionProperties = new HashMap<>();
@@ -228,6 +245,8 @@ public class InformPolicyTest extends TestCase
         versionService.createVersion(document, versionProperties);
         log.debug(versionService.getCurrentVersion(document).getVersionProperties().toString());
 
+        message = ACTION_EXECUTOR.retrieveLastTestMessage();
+        Assert.assertNotNull(message);
         VersionHistory versionHistory = versionService.getVersionHistory(document);
         ArrayList<Version> allVersions = new ArrayList(versionHistory.getAllVersions());
 
@@ -243,21 +262,13 @@ public class InformPolicyTest extends TestCase
         //Assert.assertNotNull(message);
     }
 
-    @After
-    public void after()
+    @Test
+    public void testWiring()
     {
-        log.debug("after");
-        for (NodeRef user: users)
-        {
-            personService.deletePerson(user);
-        }
-        fileFolderService.delete(document);
-        fileFolderService.delete(parentFolder);
-        if (users != null) {
-            users.clear();
-        }
-        ACTION_EXECUTER.setTestMode(WAS_IN_TEST_MODE);
+        log.debug("testWiring");
+        assertNotNull(informPolicy);
     }
+
 
     private NodeRef createUser(String username, String firstName, String lastName, String email, String passwd) {
 

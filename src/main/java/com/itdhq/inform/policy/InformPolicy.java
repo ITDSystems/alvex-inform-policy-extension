@@ -52,6 +52,8 @@ public class InformPolicy
     private boolean associated;
     //private boolean infavorites;
 
+    private Action mailAction;
+
     public void setVersionService(VersionService versionService) {this.versionService = versionService; }
     public void setNodeService(NodeService nodeService) {this.nodeService = nodeService; }
     public void setPersonService(PersonService personService) {this.personService = personService; }
@@ -215,6 +217,15 @@ public class InformPolicy
             return null;
         }
         return resultSet.getNodeRef(0);
+    }
+
+    public void setMailActionExecutor(Action mailAction)
+    {
+        if (null == this.mailAction) {
+
+        } else {
+
+        }
     }
 
     private void sendMail(String username, NodeRef emailTemplateNodeRef, HashMap<String, Serializable> fortemplate) throws AlfrescoRuntimeException
