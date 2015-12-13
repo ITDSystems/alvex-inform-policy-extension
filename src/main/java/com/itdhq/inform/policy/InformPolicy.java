@@ -76,7 +76,7 @@ public class InformPolicy
         Behaviour afterCreateVersionBehaviour = new JavaBehaviour(this, "afterCreateVersion", Behaviour.NotificationFrequency.TRANSACTION_COMMIT);
         this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "afterCreateVersion"), InformPolicy.class, afterCreateVersionBehaviour);
 
-        // Cause we already know where our templates are TODO change comment
+        // Adding template paths
         templates = new HashMap<>(5);
         templates.put("creator", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_creator.html.ftl\"");
         templates.put("lasteditor", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_lasteditor.html.ftl\"");
@@ -150,16 +150,6 @@ public class InformPolicy
                 informedUsers.addAll(editornames);
             }
         }
-
-        // TODO Favorites
-        /*
-        if (infavorites)
-        {
-            logger.debug("infavorites");
-            informInFavoritesdUsers(versionableNode);
-        }
-        */
-        logger.debug(informedUsers.toString());
     }
 
     private String getDocumentCreator(NodeRef document)
@@ -217,15 +207,6 @@ public class InformPolicy
             return null;
         }
         return resultSet.getNodeRef(0);
-    }
-
-    public void setMailActionExecutor(Action mailAction)
-    {
-        if (null == this.mailAction) {
-
-        } else {
-
-        }
     }
 
     private void sendMail(String username, NodeRef emailTemplateNodeRef, HashMap<String, Serializable> fortemplate) throws AlfrescoRuntimeException

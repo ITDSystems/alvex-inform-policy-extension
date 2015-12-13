@@ -1,16 +1,16 @@
-# alfresco-inform-policy-extension-repo
+# alfresco-inform-policy-extension-repo v0.7
 
 An Alfresco 5.0 extension. Informs interested users about document updates. 
 
 ### Installation
 For Linux
 * Clone the repo
-* Run $mvn install from the root (make sure that you have maven and jdk8 installed)
+* Run `mvn install`
+from the root (make sure that you have maven and jdk8 installed)
 * Copy the .amp file from target/ into {alfresco-directory}/amps/
-* Run $./{alfresco-directory}/bin/apply_amps.sh
+* Run './{alfresco-directory}/bin/apply_amps.sh`
 
-### How it works
-Extension contains AfterCreateVersionPolicy implementation, that collect all users in groups "Creator", "Last edtor", "Associated", "Editors" and informs them with emails if flag for group is "true".
+Now it's ready to work!
 
 ### Development build
 You'll need test models with cm:person assocs for developemnt and debug. Sample model and context for it are located under **src/test/resources/alfresco/extension/**.
@@ -23,13 +23,6 @@ You'll need test models with cm:person assocs for developemnt and debug. Sample 
          </type>
 ```
 * After that you can "Change type" of any file into custom **myc:assocs** to get cm:person assocs for debug purposes.
-
-### TODO:
-* Test.
-* Check configured outbound mail from init
-* Inform about deletion
-* "In Favorite" group.
-* Add user notifications preferences
 
 ## v0.7
 ### DONE
