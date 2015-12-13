@@ -43,28 +43,28 @@
 
 
         <property name="mailfrom">
-            <value>${mail.from}</value>
+            <value>${documentchangeinform.mail.from}</value>
         </property>
         <property name="subject">
-            <value>${mail.subject}</value>
+            <value>${documentchangeinform.mail.subject}</value>
         </property>
 
         <property name="creator">
-            <value>${creator}</value>
+            <value>${documentchangeinform.creator}</value>
         </property>
         <property name="lasteditor">
-            <value>${lasteditor}</value>
+            <value>${documentchangeinform.lasteditor}</value>
         </property>
         <property name="editors">
-            <value>${editors}</value>
+            <value>${documentchangeinform.editors}</value>
         </property>
         <property name="associated">
-            <value>${associated}</value>
+            <value>${documentchangeinform.associated}</value>
         </property>
         <!---
 
                 <property name="infavorites">
-                    <value>${infavorites}</value>
+                    <value>${documentchangeinform.infavorites}</value>
                 </property>
         -->
     </bean>
