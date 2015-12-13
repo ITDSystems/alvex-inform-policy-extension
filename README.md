@@ -6,9 +6,9 @@ An Alfresco 5.0 extension. Informs interested users about document updates.
 For Linux
 * Clone the repo
 * Run `mvn install`
-from the root (make sure that you have maven and jdk8 installed)
-* Copy the .amp file from target/ into {alfresco-directory}/amps/
-* Run './{alfresco-directory}/bin/apply_amps.sh`
+from repo root (make sure that you have maven and jdk8 installed)
+* Copy the .amp file from ***target/*** into ***{alfresco-directory}/amps/***
+* Run `./{alfresco-directory}/bin/apply_amps.sh`
 
 Now it's ready to work!
 
