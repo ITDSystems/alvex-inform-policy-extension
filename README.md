@@ -31,6 +31,7 @@ You'll need test models with cm:person assocs for developemnt and debug. Sample 
 * "In Favorite" group.
 * Add user notifications preferences
 * Add share extension for user preferences
+
 ##### git
 * Releases
 * Migrate in ITD repo
