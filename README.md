@@ -11,7 +11,8 @@ This extension allows Alfresco 5 to inform users about changes in related docume
 Now you can set prefered Subject and From in global properties of extension. Also, extension changed in way to make it safer for errors.
 
 ### Installation
-For Linux
+For Linux:
+
 1. Clone repo `git clone https://github.com/malchun/alfresco-inform-policy-extension-repo`
 2. In repo folder checkout v0.7 branch `git checkout v0.7`
 3. Run `mvn install` (make sure that you have maven and jdk8 installed)
