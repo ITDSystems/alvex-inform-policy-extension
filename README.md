@@ -47,10 +47,6 @@ You'll need test models with cm:person assocs for developemnt and debug. Sample 
 * Add user notifications preferences
 * Add share extension for user preferences
 
-##### git
-* Releases
-* Migrate in ITD repo
-
 ### Usage
 All preferences could be set in ***alfresco-global.properties***. This version has next preferences:
 * Mail preferences
