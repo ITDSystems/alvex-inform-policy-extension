@@ -15,7 +15,7 @@
         <property name="name" value="${project.name} Data" />
         <property name="description" value="Bootstrap Repo Content for ${project.name}" />
         <property name="sinceVersion" value="${noSnapshotVersion}" />
-        <!-- <property name="appliesFromVersion" value="${noSnapshotVersion}" /> -->
+        <property name="appliesFromVersion" value="${noSnapshotVersion}" />
         <!-- Data properties -->
         <property name="importer" ref="spacesBootstrap"/>
         <property name="bootstrapViews">

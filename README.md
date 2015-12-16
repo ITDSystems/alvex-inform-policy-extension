@@ -1,12 +1,27 @@
-# alfresco-inform-policy-extension-repo
+# alfresco-inform-policy-extension-repo v0.7
 
-An Alfresco 5.0 extension. Informs interested users about document updates. Current stable version is in **v0.7** branch.
+This extension allows Alfresco 5 to inform users about changes in related documents.
+
+## v0.7
+### DONE
+* Email metadata customising.
+* Correct exceptions and checks
+* ~~Check templates in init~~ (hard to make, dropped)
+
+Now you can set prefered Subject and From in global properties of extension. Also, extension changed in way to make it safer for errors.
 
 ### Installation
-Check [**v0.7** branch][1].
+For Linux
+1. Clone repo `git clone https://github.com/malchun/alfresco-inform-policy-extension-repo`
+2. In repo folder checkout v0.7 branch `git checkout v0.7`
+3. Run `mvn install` (make sure that you have maven and jdk8 installed)
+4. Copy the .amp file from **{repo-directory}/target/** into **{alfresco-directory}/amps/**
+5. Run `./{alfresco-directory}/bin/apply_amps.sh`
+6. Set your preferences in **alfresco-global.properties** (explained later)
 
-### How it works
-Extension contains AfterCreateVersionPolicy implementation, that collect all users in groups "Creator", "Last edtor", "Associated", "Editors" and informs them with emails if flag for group is "true".
+Or instead you could just load .amp file from https://github.com/malchun/alfresco-inform-policy-extension-repo/v0.7/Distr/ and begin from step 4
+
+**Warning!** Extension would not work without configured OutboundSMTP!
 
 ### Development build
 You'll need test models with cm:person assocs for developemnt and debug. Sample model and context for it are located under **src/test/resources/alfresco/extension/**.
@@ -37,7 +52,7 @@ You'll need test models with cm:person assocs for developemnt and debug. Sample 
 * Migrate in ITD repo
 
 
-## [v0.7][1]
+## v0.7
 ### DONE
 * Email metadata customising.
 * Correct exceptions and checks
@@ -45,4 +60,15 @@ You'll need test models with cm:person assocs for developemnt and debug. Sample 
 
 Now you can set prefered Subject and From in global properties of extension. Also, extension changed in way to make it safer for errors.
 
-[1]: https://github.com/malchun/alfresco-inform-policy-extension-repo/tree/v0.7
+### Usage
+All preferences could be set in ***alfresco-global.properties***. This version has next preferences:
+* Mail preferences
+ * **documentchangeinform.mail.from** (String) - notification from address, not working if in your OutboundSMTP configuration mail.from.enabled false or not set!
+ * **documentchangeinform.mail.subject** (String) - notification subject
+* Group preferences
+ * **documentchangeinform.creator** (booolean) - enable notifications for document creator
+ * **documentchangeinform.lasteditor** (booolean) - same for last editor of document
+ * **documentchangeinform.associated** (booolean) - same for everyone in target associations of document
+ * **documentchangeinform.editors** (booolean) - and for version creators
+
+After starting Alfresco with installed extension you can find email templates at **dictionary/Email Templates/Document Change Notification/** in repository and customize them if you need.
