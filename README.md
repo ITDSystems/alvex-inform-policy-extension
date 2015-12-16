@@ -19,7 +19,7 @@ For Linux
 5. Run `./{alfresco-directory}/bin/apply_amps.sh`
 6. Set your preferences in **alfresco-global.properties** (explained later)
 
-Or instead you could just load .amp file from https://github.com/malchun/alfresco-inform-policy-extension-repo/v0.7/Distr/ and begin from step 4
+Or instead you could just load .amp file from https://github.com/ITDSystems/alfresco-inform-policy-extension-repo/releases/tag/v0.7 and begin from step 4
 
 **Warning!** Extension would not work without configured OutboundSMTP!
 
@@ -50,15 +50,6 @@ You'll need test models with cm:person assocs for developemnt and debug. Sample 
 ##### git
 * Releases
 * Migrate in ITD repo
-
-
-## v0.7
-### DONE
-* Email metadata customising.
-* Correct exceptions and checks
-* ~~Check templates in init~~ (hard to make, dropped)
-
-Now you can set prefered Subject and From in global properties of extension. Also, extension changed in way to make it safer for errors.
 
 ### Usage
 All preferences could be set in ***alfresco-global.properties***. This version has next preferences:
