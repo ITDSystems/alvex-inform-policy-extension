@@ -61,11 +61,8 @@
         <property name="associated">
             <value>${documentchangeinform.associated}</value>
         </property>
-        <!---
-
-                <property name="infavorites">
-                    <value>${documentchangeinform.infavorites}</value>
-                </property>
-        -->
+        <property name="infavorites">
+            <value>${documentchangeinform.infavorites}</value>
+        </property>
     </bean>
 </beans>

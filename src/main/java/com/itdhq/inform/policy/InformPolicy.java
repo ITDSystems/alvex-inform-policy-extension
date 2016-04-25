@@ -50,7 +50,7 @@ public class InformPolicy
     private boolean lasteditor;
     private boolean editors;
     private boolean associated;
-    //private boolean infavorites;
+    private boolean infavorites;
 
     private Action mailAction;
 
@@ -68,7 +68,10 @@ public class InformPolicy
     public void setLasteditor(boolean lasteditor) {this.lasteditor = lasteditor; }
     public void setEditors(boolean editors) {this.editors = editors; }
     public void setAssociated(boolean associated) {this.associated = associated; }
-    //public void setInfavorites(boolean infavorites) {this.infavorites = infavorites; }
+    public void setInfavorites(boolean infavorites) {this.infavorites = infavorites; }
+
+    public static final QName infavorites_documents_association_qname = QName.createQName("http://itdhq.com/prefix/infav", "infavorites_documents_association");
+    public static final QName infavorites_folders_association_qname = QName.createQName("http://itdhq.com/prefix/infav", "infavorites_folders_association");
 
     public void init()
     {
@@ -82,7 +85,7 @@ public class InformPolicy
         templates.put("lasteditor", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_lasteditor.html.ftl\"");
         templates.put("associated", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_associated.html.ftl\"");
         templates.put("editors", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_editors.html.ftl\"");
-        //templates.put("infavorites", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_infavorites.html.ftl\"");
+        templates.put("infavorites", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_favorited.html.ftl\"");
     }
 
     @Override
@@ -123,7 +126,7 @@ public class InformPolicy
         // All associated
         if (associated) {
             logger.debug("Notifying users associated with the document");
-            HashSet<String> associatedusernames = getAssociatedUsers(versionableNode);
+            Set<String> associatedusernames = getAssociatedUsers(versionableNode);
             associatedusernames.removeAll(informedUsers);
             if (associatedusernames.size() > 0) {
                 NodeRef mailAssociatedTemplate = getMailTemplate(templates.get("associated"));
@@ -138,7 +141,7 @@ public class InformPolicy
         // All editors
         if (editors) {
             logger.debug("Notifying all previous editors of the document");
-            HashSet<String> editornames = getEditors(versionableNode);
+            Set<String> editornames = getEditors(versionableNode);
             logger.debug("Editors :" + editornames.toString());
             editornames.removeAll(informedUsers);
             if (editornames.size() > 0) {
@@ -150,6 +153,23 @@ public class InformPolicy
                 informedUsers.addAll(editornames);
             }
         }
+
+        // All favorited
+        if (infavorites) {
+            logger.debug("Notifying persons who favorited this document if still not");
+            Set<String> favoritednames = getFavoritedUsers(versionableNode);
+            logger.debug("Favorited :" + favoritednames.toString());
+            favoritednames.removeAll(informedUsers);
+            if (favoritednames.size() > 0) {
+                NodeRef mailEditorsTemplate = getMailTemplate(templates.get("infavorites"));
+                for (String user: favoritednames)
+                {
+                    sendMail(user, mailEditorsTemplate, fortemplate);
+                }
+                informedUsers.addAll(favoritednames);
+            }
+        }
+
     }
 
     private String getDocumentCreator(NodeRef document)
@@ -180,10 +200,10 @@ public class InformPolicy
         return users;
     }
 
-    private HashSet<String> getAssociatedUsers(NodeRef versionableNode)
+    private Set<String> getAssociatedUsers(NodeRef versionableNode)
     {
         logger.debug("Getting associated users for the document");
-        HashSet <String> associatedUsers = new HashSet<>();
+        Set <String> associatedUsers = new HashSet<>();
         ArrayList<AssociationRef> associationsTarget = (ArrayList<AssociationRef>) nodeService.getTargetAssocs(versionableNode, RegexQNamePattern.MATCH_ALL);
         for (AssociationRef assoc: associationsTarget)
         {
@@ -193,6 +213,20 @@ public class InformPolicy
             }
         }
         return associatedUsers;
+    }
+
+    private Set<String> getFavoritedUsers(NodeRef versionableNode)
+    {
+        logger.debug("Getting favorited user from association (possible with InFavorites extension)");
+        List<AssociationRef> interested = nodeService.getSourceAssocs(versionableNode, infavorites_documents_association_qname);
+        interested.addAll(nodeService.getSourceAssocs(versionableNode, infavorites_folders_association_qname));
+        Set<String> res = new HashSet<>();
+        for (AssociationRef sourceAssoc: interested)
+        {
+            NodeRef person = sourceAssoc.getSourceRef();
+            res.add(personService.getPerson(person).getUserName());
+        }
+        return res;
     }
 
     private NodeRef getMailTemplate(String templatePATH) throws AlfrescoRuntimeException
