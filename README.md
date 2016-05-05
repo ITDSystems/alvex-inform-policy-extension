@@ -1,14 +1,12 @@
-# alfresco-inform-policy-extension-repo v0.7
+# alfresco-inform-policy-extension-repo v0.8
 
 This extension allows Alfresco 5 to inform users about changes in related documents.
 
-## v0.7
+## v0.8
 ### DONE
-* Email metadata customising.
-* Correct exceptions and checks
-* ~~Check templates in init~~ (hard to make, dropped)
+* "In Favorite" group.
 
-Now you can set prefered Subject and From in global properties of extension. Also, extension changed in way to make it safer for errors.
+With installed [In Favorites Association](https://github.com/malchun/alfresco-infavorites-document-association-repo) extension you could inform users about changes of their favorited documents
 
 ### Installation
 For Linux:
@@ -44,7 +42,6 @@ You'll need test models with cm:person assocs for developemnt and debug. Sample 
 ### TODO:
 * Article
 * Inform about deletion
-* "In Favorite" group.
 * Add user notifications preferences
 * Add share extension for user preferences
 
@@ -58,5 +55,7 @@ All preferences could be set in ***alfresco-global.properties***. This version h
  * **documentchangeinform.lasteditor** (booolean) - same for last editor of document
  * **documentchangeinform.associated** (booolean) - same for everyone in target associations of document
  * **documentchangeinform.editors** (booolean) - and for version creators
+ * **documentchangeinform.infavorites** (booolean) - also for favorited
 
 After starting Alfresco with installed extension you can find email templates at **dictionary/Email Templates/Document Change Notification/** in repository and customize them if you need.
+

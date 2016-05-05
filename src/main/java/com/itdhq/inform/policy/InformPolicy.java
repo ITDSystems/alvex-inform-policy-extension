@@ -6,6 +6,8 @@ import org.alfresco.repo.action.executer.MailActionExecuter;
 import org.alfresco.repo.policy.Behaviour;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.version.VersionServicePolicies.AfterCreateVersionPolicy;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.action.Action;
@@ -23,8 +25,10 @@ import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
+import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
+import org.apache.solr.common.SolrException;
 
 import java.io.Serializable;
 import java.util.*;
@@ -42,8 +46,11 @@ public class InformPolicy
     private NodeService nodeService;
     private ServiceRegistry serviceRegistry;
     private ActionService actionService;
+    private SearchService searchService;
+    private TransactionService transactionService;
 
-    private HashMap<String, String> templates;
+    private HashMap<String, NodeRef> templates = new HashMap<>(5);
+    private HashMap<String, String> templatePaths = new HashMap<>(5);
     private String mailfrom;
     private String subject;
     private boolean creator;
@@ -60,7 +67,8 @@ public class InformPolicy
     public void setActionService(ActionService actionService) {this.actionService = actionService; }
     public void setPolicyComponent(PolicyComponent policyComponent) {this.policyComponent = policyComponent; }
     public void setServiceRegistry(ServiceRegistry serviceRegistry) {this.serviceRegistry = serviceRegistry; }
-
+    public void setSearchService(SearchService searchService) { this.searchService = searchService; }
+    public void setTransactionService(TransactionService transactionService) { this.transactionService = transactionService; }
 
     public void setMailfrom(String mailfrom) {this.mailfrom = mailfrom; }
     public void setSubject(String subject) {this.subject = subject; }
@@ -80,16 +88,16 @@ public class InformPolicy
         this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "afterCreateVersion"), InformPolicy.class, afterCreateVersionBehaviour);
 
         // Adding template paths
-        templates = new HashMap<>(5);
-        templates.put("creator", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_creator.html.ftl\"");
-        templates.put("lasteditor", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_lasteditor.html.ftl\"");
-        templates.put("associated", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_associated.html.ftl\"");
-        templates.put("editors", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_editors.html.ftl\"");
-        templates.put("infavorites", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_favorited.html.ftl\"");
+        templatePaths.put("creator", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_creator.html.ftl\"");
+        templatePaths.put("lasteditor", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_lasteditor.html.ftl\"");
+        templatePaths.put("associated", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_associated.html.ftl\"");
+        templatePaths.put("editors", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_editors.html.ftl\"");
+        templatePaths.put("infavorites", "PATH:\"/app:company_home/app:dictionary/app:email_templates/cm:document_change_notification/cm:inform_mail_template_favorited.html.ftl\"");
     }
 
     @Override
-    public void afterCreateVersion(NodeRef versionableNode, Version version) {
+    public void afterCreateVersion(NodeRef versionableNode, Version version)
+    {
         HashSet<String> informedUsers = new HashSet<>();
         String lasteditorname = getLastEditor(version);
         String creatorname = getDocumentCreator(versionableNode);
@@ -108,7 +116,13 @@ public class InformPolicy
         // Version creator
         if (creator) {
             logger.debug("Notifying creator of the document");
-            NodeRef mailCreatorTemplate = getMailTemplate(templates.get("creator"));
+            NodeRef mailCreatorTemplate;
+            if (templates.containsKey("creator") && null != templates.get("creator")) {
+                mailCreatorTemplate = templates.get("creator");
+            } else {
+                mailCreatorTemplate = getMailTemplate(templatePaths.get("creator"));
+                templates.put("creator", mailCreatorTemplate);
+            }
             sendMail(creatorname, mailCreatorTemplate, fortemplate);
             informedUsers.add(creatorname);
         }
@@ -117,7 +131,13 @@ public class InformPolicy
         if (lasteditor) {
             logger.debug("Notifying last editor of the document");
             if (!informedUsers.contains(lasteditorname)) {
-                NodeRef mailLastEditorTemplate = getMailTemplate(templates.get("lasteditor"));
+                NodeRef mailLastEditorTemplate;
+                if (templates.containsKey("lasteditor") && null != templates.get("lasteditor")) {
+                    mailLastEditorTemplate = templates.get("lasteditor");
+                } else {
+                    mailLastEditorTemplate = getMailTemplate(templatePaths.get("lasteditor"));
+                    templates.put("lasteditor", mailLastEditorTemplate);
+                }
                 sendMail(lasteditorname, mailLastEditorTemplate, fortemplate);
                 informedUsers.add(lasteditorname);
             }
@@ -129,7 +149,13 @@ public class InformPolicy
             Set<String> associatedusernames = getAssociatedUsers(versionableNode);
             associatedusernames.removeAll(informedUsers);
             if (associatedusernames.size() > 0) {
-                NodeRef mailAssociatedTemplate = getMailTemplate(templates.get("associated"));
+                NodeRef mailAssociatedTemplate;
+                if (templates.containsKey("associated") && null != templates.get("associated")) {
+                    mailAssociatedTemplate = templates.get("associated");
+                } else {
+                    mailAssociatedTemplate = getMailTemplate(templatePaths.get("associated"));
+                    templates.put("associated", mailAssociatedTemplate);
+                }
                 for (String user: associatedusernames)
                 {
                     sendMail(user, mailAssociatedTemplate, fortemplate);
@@ -145,7 +171,13 @@ public class InformPolicy
             logger.debug("Editors :" + editornames.toString());
             editornames.removeAll(informedUsers);
             if (editornames.size() > 0) {
-                NodeRef mailEditorsTemplate = getMailTemplate(templates.get("editors"));
+                NodeRef mailEditorsTemplate;
+                if (templates.containsKey("editors") && null != templates.get("editors")) {
+                    mailEditorsTemplate = templates.get("editors");
+                } else {
+                    mailEditorsTemplate = getMailTemplate(templatePaths.get("editors"));
+                    templates.put("editors", mailEditorsTemplate);
+                }
                 for (String user: editornames)
                 {
                     sendMail(user, mailEditorsTemplate, fortemplate);
@@ -161,7 +193,13 @@ public class InformPolicy
             logger.debug("Favorited :" + favoritednames.toString());
             favoritednames.removeAll(informedUsers);
             if (favoritednames.size() > 0) {
-                NodeRef mailEditorsTemplate = getMailTemplate(templates.get("infavorites"));
+                NodeRef mailEditorsTemplate;
+                if (templates.containsKey("infavorites") && null != templates.get("infavorites")) {
+                    mailEditorsTemplate = templates.get("infavorites");
+                } else {
+                    mailEditorsTemplate = getMailTemplate(templatePaths.get("infavorites"));
+                    templates.put("infavorites", mailEditorsTemplate);
+                }
                 for (String user: favoritednames)
                 {
                     sendMail(user, mailEditorsTemplate, fortemplate);
@@ -229,18 +267,24 @@ public class InformPolicy
         return res;
     }
 
-    private NodeRef getMailTemplate(String templatePATH) throws AlfrescoRuntimeException
+    private NodeRef getMailTemplate(String templatePATH) throws SolrException
     {
         logger.debug("Getting mail templates from repository");
-        ResultSet resultSet = serviceRegistry.getSearchService().query(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore"), SearchService.LANGUAGE_LUCENE, templatePATH);
-        if (resultSet.length() == 0) {
-            // Cause we have no better solution. Because policy works
-            // during deployment of system exception causes crash.
-            //throw new AlfrescoRuntimeException("Can't find email template!");
-            logger.error("Template node not found!");
+        try {
+            ResultSet resultSet = searchService.query(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore"), SearchService.LANGUAGE_LUCENE, templatePATH);
+            if (resultSet.length() == 0) {
+                // Cause we have no better solution. Because policy works
+                // during deployment of system exception causes crash.
+                //throw new AlfrescoRuntimeException("Can't find email template!");
+                logger.error("Template node not found!");
+                return null;
+            }
+            return resultSet.getNodeRef(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.debug("Solr might be still inactive");
             return null;
         }
-        return resultSet.getNodeRef(0);
     }
 
     private void sendMail(String username, NodeRef emailTemplateNodeRef, HashMap<String, Serializable> fortemplate) throws AlfrescoRuntimeException

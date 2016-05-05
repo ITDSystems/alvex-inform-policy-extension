@@ -40,6 +40,12 @@
         <property name="serviceRegistry">
             <ref bean="ServiceRegistry" />
         </property>
+        <property name="searchService">
+            <ref bean="SearchService" />
+        </property>
+        <property name="transactionService">
+            <ref bean="TransactionService"/>
+        </property>
 
 
         <property name="mailfrom">
