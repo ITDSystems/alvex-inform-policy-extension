@@ -13,16 +13,17 @@ Now you can set prefered Subject and From in global properties of extension. Als
 ### Installation
 For Linux:
 
-1. Clone repo `git clone https://github.com/malchun/alfresco-inform-policy-extension-repo`
-2. In repo folder checkout v0.7 branch `git checkout v0.7`
-3. Run `mvn install` (make sure that you have maven and jdk8 installed)
-4. Copy the .amp file from **{repo-directory}/target/** into **{alfresco-directory}/amps/**
-5. Run `./{alfresco-directory}/bin/apply_amps.sh`
-6. Set your preferences in **alfresco-global.properties** (explained later)
+1. Download .amp file from [release v0.7](https://github.com/ITDSystems/alfresco-inform-policy-extension-repo/releases/tag/v0.7)
+2. Copy the .amp file into **{alfresco-directory}/amps/**
+3. Run `./{alfresco-directory}/bin/apply_amps.sh`
+4. Set your preferences in **alfresco-global.properties** (explained later)
 
 Or instead you could just load .amp file from https://github.com/ITDSystems/alfresco-inform-policy-extension-repo/releases/tag/v0.7 and begin from step 4
 
 **Warning!** Extension would not work without configured OutboundSMTP!
+
+### Known issues
+Applying this extension to just installed Alfresco could broke sistem during bootstrap. Strongly recomended to install it only after the first start.
 
 ### Development build
 You'll need test models with cm:person assocs for developemnt and debug. Sample model and context for it are located under **src/test/resources/alfresco/extension/**.
