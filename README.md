@@ -12,7 +12,7 @@ With installed [In Favorites Association](https://github.com/malchun/alfresco-in
 For Linux:
 
 1. Clone repo `git clone https://github.com/malchun/alfresco-inform-policy-extension-repo`
-2. In repo folder checkout v0.7 branch `git checkout v0.7`
+2. In repo folder checkout v0.7 branch `git checkout v0.8-dev`
 3. Run `mvn install` (make sure that you have maven and jdk8 installed)
 4. Copy the .amp file from **{repo-directory}/target/** into **{alfresco-directory}/amps/**
 5. Run `./{alfresco-directory}/bin/apply_amps.sh`
@@ -38,6 +38,7 @@ You'll need test models with cm:person assocs for developemnt and debug. Sample 
 ### DONE
 * Some test
 * ~~Check configured outbound mail from init~~ (pointless, dropped)
+* "In Favorite" group.
 
 ### TODO:
 * Article
