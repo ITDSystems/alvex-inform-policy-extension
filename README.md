@@ -13,7 +13,7 @@ Now you can set prefered Subject and From in global properties of extension. Als
 ### Installation
 For Linux:
 
-1. Download .amp file from [release v0.7](https://github.com/ITDSystems/alvex-inform-policy-extension-repo/releases/tag/v0.7)
+1. Download .amp file from [release v0.7](https://github.com/ITDSystems/alvex-inform-policy-extension/releases/tag/v0.7)
 2. Copy the .amp file into **{alfresco-directory}/amps/**
 3. Run `./{alfresco-directory}/bin/apply_amps.sh`
 4. Set your preferences in **alfresco-global.properties** (explained later)
