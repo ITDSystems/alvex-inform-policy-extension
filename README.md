@@ -1,4 +1,4 @@
-# alfresco-inform-policy-extension-repo v0.7
+# Alvex inform policy extension v0.7
 
 This extension allows Alfresco 5 to inform users about changes in related documents.
 
