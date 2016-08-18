@@ -18,7 +18,7 @@ For Linux:
 3. Run `./{alfresco-directory}/bin/apply_amps.sh`
 4. Set your preferences in **alfresco-global.properties** (explained later)
 
-Or instead you could just load .amp file from https://github.com/ITDSystems/alfresco-inform-policy-extension-repo/releases/tag/v0.7 and begin from step 4
+Or instead you could just load .amp file from https://github.com/ITDSystems/alvex-inform-policy-extension-repo/releases/tag/v0.7 and begin from step 4
 
 **Warning!** Extension would not work without configured OutboundSMTP!
 
