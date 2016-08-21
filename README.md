@@ -1,6 +1,8 @@
-# Alvex inform policy extension v0.7
+# BRANCH IS UNDER HEAVY DEVELOPMENT! DO NOT USE!
+[![Build Status](https://travis-ci.org/ITDSystems/alvex-meta.svg?branch=master)](https://travis-ci.org/ITDSystems/alvex-inform-policy-extension)
+# Alvex inform policy extension v1.1
 
-This extension allows Alfresco 5 to inform users about changes in related documents.
+This extension allows Alfresco 5 to inform users about changes in related documents. Current branch created to up extension to alvex standarts.
 
 ## v0.7
 ### DONE
