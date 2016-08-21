@@ -14,8 +14,8 @@
         <property name="moduleId" value="inform-policy" />
         <property name="name" value="Document Change Notification Policy Data" />
         <property name="description" value="Bootstrap Repo Content for Document Change Notification Policy" />
-        <property name="sinceVersion" value="1.1.1608180944" />
-        <property name="appliesFromVersion" value="1.1.1608180944" />
+        <property name="sinceVersion" value="${noSnapshotVersion}" />
+        <property name="appliesFromVersion" value="${noSnapshotVersion}" />
         <!-- Data properties -->
         <property name="importer" ref="spacesBootstrap"/>
         <property name="bootstrapViews">

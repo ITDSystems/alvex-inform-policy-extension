@@ -17,5 +17,3 @@ script:
     - rm -rf $HOME/.m2/repository/com/alvexcore
     - ./mvn.sh -f repo/pom.xml clean package
     - ./mvn.sh -f repo/pom.xml clean package -P make-jar
-    - ./mvn.sh -f share/pom.xml clean package
-    - ./mvn.sh -f share/pom.xml clean package -P make-jar
