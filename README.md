@@ -1,7 +1,8 @@
 [![Build Status](https://travis-ci.org/ITDSystems/alvex-meta.svg?branch=master)](https://travis-ci.org/ITDSystems/alvex-inform-policy-extension)
+
 # Alvex inform policy extension v1.1
 
-This extension allows Alfresco 5 to inform users about changes in related documents. Current branch created to up extension to alvex standarts.
+This extension informs users about changes in documents they are watching for.
 
 ## v1.1
 ### DONE
@@ -12,46 +13,23 @@ This extension allows Alfresco 5 to inform users about changes in related docume
 ### DONE
 * Email metadata customising.
 * Correct exceptions and checks
-* ~~Check templates in init~~ (hard to make, dropped)
-
-Now you can set prefered Subject and From in global properties of extension. Also, extension changed in way to make it safer for errors.
-
-### Installation
-For Linux:
-Coming soon.
 
 **Warning!** Extension would not work without configured OutboundSMTP!
 
 ### Known issues
 Applying this extension to just installed Alfresco could broke sistem during bootstrap. Strongly recomended to install it only after the first start.
 
-~~### Development build
-You'll need test models with cm:person assocs for developemnt and debug. Sample model and context for it are located under **src/test/resources/alfresco/extension/**.
-* Running embedded Tomcat with `./run.sh` activates it automatically. 
-* If you need a debug amp to run on external Alfresco, build it with `mvn -Pdevelopment clean package`
-* On Share side edit **share-config-custom.xml** to include into **<types/>** section something like this:
-```xml
-         <type name="cm:content">
-               <subtype name="myc:assocs" />
-         </type>
-```
-* After that you can "Change type" of any file into custom **myc:assocs** to get cm:person assocs for debug purposes.~~ Broken for now
+### Build
+Option 1:
+Build it via [alvex-meta](https://github.com/ITDSystems/alvex-meta). It allows to build a stable version with all deipendencies inside the package.
 
-## Current
-### DONE
-* Some test
-* "In Favorite" group.
-* ~~Check configured outbound mail from init~~ (pointless, dropped)
-
-### TODO:
-* Investigate the possibility of repairing tests
-* Article
-* Inform about deletion
-* Add user notifications preferences
-* Add share extension for user preferences
+Option 2:
+Build from this repo. The component may be packaged in two ways: *amp* and *jar*.
+To build amp use `mvn clean package`, to build installable jar use `mvn -P make-jar clean package`.
 
 ### Usage
-All preferences could be set in ***alfresco-global.properties***. This version has next preferences:
+All preferences could be set in ***alfresco-global.properties***:
+
 * Mail preferences
  * **documentchangeinform.mail.from** (String) - notification from address, not working if in your OutboundSMTP configuration mail.from.enabled false or not set!
  * **documentchangeinform.mail.subject** (String) - notification subject
@@ -62,4 +40,12 @@ All preferences could be set in ***alfresco-global.properties***. This version h
  * **documentchangeinform.editors** (booolean) - and for version creators
  * **documentchangeinform.infavorites** (booolean) - for all who favorited this document (requires [alvex-infavorites-document-associtation](https://github.com/ITDSystems/alvex-infavorites-document-association) component)
 
-After starting Alfresco with installed extension you can find email templates at **dictionary/Email Templates/Document Change Notification/** in repository and customize them if you need.
+After starting Alfresco with installed extension you can find email templates at **Data Dictionary/Email Templates/Document Change Notification/**. Customize them if you need.
+
+### Roadmap | TODO:
+* Investigate the possibility of repairing tests
+* Article
+* Inform about deletion
+* Add user notifications preferences
+* Add share extension for user preferences
+
