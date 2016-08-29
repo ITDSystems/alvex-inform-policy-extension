@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.alvexcore.repo</groupId>
     <artifactId>inform-policy</artifactId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
     <name>Alvex Inform Policy Component [Repo]</name>
     <packaging>${packaging.type}</packaging>
     <description>Informs all interested users about changes in tracked files</description>
