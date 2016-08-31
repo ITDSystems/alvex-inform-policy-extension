@@ -40,6 +40,9 @@
         <property name="serviceRegistry">
             <ref bean="ServiceRegistry" />
         </property>
+        <property name="repositoryState">
+            <ref bean="repositoryState" />
+        </property>
 
 
         <property name="mailfrom">
