@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.*;
+import org.alfresco.repo.admin.RepositoryState;
 
 /**
  * Created by malchun on 11/13/15.
@@ -42,6 +43,7 @@ public class InformPolicy
     private NodeService nodeService;
     private ServiceRegistry serviceRegistry;
     private ActionService actionService;
+    protected RepositoryState repositoryState;
 
     private HashMap<String, String> templates;
     private String mailfrom;
@@ -60,6 +62,7 @@ public class InformPolicy
     public void setActionService(ActionService actionService) {this.actionService = actionService; }
     public void setPolicyComponent(PolicyComponent policyComponent) {this.policyComponent = policyComponent; }
     public void setServiceRegistry(ServiceRegistry serviceRegistry) {this.serviceRegistry = serviceRegistry; }
+    public void setRepositoryState(RepositoryState repositoryState) { this.repositoryState = repositoryState; }
 
 
     public void setMailfrom(String mailfrom) {this.mailfrom = mailfrom; }
@@ -231,6 +234,12 @@ public class InformPolicy
 
     private NodeRef getMailTemplate(String templatePATH) throws AlfrescoRuntimeException
     {
+        // If we do not handle this case, it causes nasty crash on startup
+        if(repositoryState.isBootstrapping()) {
+            logger.info("Mail templates are not available during repo bootstrap");
+            return null;
+        }
+
         logger.debug("Getting mail templates from repository");
         ResultSet resultSet = serviceRegistry.getSearchService().query(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore"), SearchService.LANGUAGE_LUCENE, templatePATH);
         if (resultSet.length() == 0) {
