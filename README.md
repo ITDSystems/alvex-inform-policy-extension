@@ -18,15 +18,6 @@ This extension informs users about changes in documents they are watching for.
 ### Known issues
 Applying this extension to just installed Alfresco could broke sistem during bootstrap. Strongly recomended to install it only after the first start.
 
-Build
------
-Option 1:
-Build it via [alvex-meta](https://github.com/ITDSystems/alvex-meta). It allows to build a stable version with all deipendencies inside the package.
-
-Option 2:
-Build from this repo. The component may be packaged in two ways: *amp* and *jar*.
-To build amp use `mvn clean package`, to build installable jar use `mvn -P make-jar clean package`.
-
 Use
 -----
 All preferences could be set in ***alfresco-global.properties***:
