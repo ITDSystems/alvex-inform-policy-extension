@@ -1,4 +1,4 @@
-package com.alvexcore.repo;
+package com.alvexcore.repo.informPolicy;
 
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.model.ContentModel;
@@ -23,7 +23,6 @@ import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
 
 import java.io.Serializable;
