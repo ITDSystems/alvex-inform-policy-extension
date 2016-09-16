@@ -3,49 +3,52 @@
 Alvex inform policy extension
 ========================
 
-This extension informs users about changes in documents they are watching for.
+This extension informs users about changes in documents they are watching for. If someone updates a document, the following users receive email:
+* creator of the document
+* last editor of the document
+* all editors of the document
+* all users mentioned in associations of the document
+* users favourited the document (requires [alvex-infavorites-document-associtation](https://github.com/ITDSystems/alvex-infavorites-document-association) component)
 
-### v1.1
-* Moved to alvex component
-* "In Favorite" group added
+Compatible with Alfresco 5.1.
 
-### v0.7
-* Email metadata customising.
-* Correct exceptions and checks
+This component depends on:
+* [Alvex Utils](https://github.com/ITDSystems/alvex-utils)
 
-**Warning!** Extension would not work without configured OutboundSMTP!
+# Downloads
 
-### Known issues
-Applying this extension to just installed Alfresco could broke sistem during bootstrap. Strongly recomended to install it only after the first start.
+Download ready-to-use Alvex components via [Alvex](https://github.com/ITDSystems/alvex#downloads).
 
-Use
------
-All preferences could be set in ***alfresco-global.properties***:
+# Build from source
+
+To build Alvex follow [this guide](https://github.com/ITDSystems/alvex#build-component-from-source).
+
+# Use
+
+All preferences could be set in **alfresco-global.properties**:
 
 * Mail preferences
  * **documentchangeinform.mail.from** (String) - notification from address, not working if in your OutboundSMTP configuration mail.from.enabled false or not set!
  * **documentchangeinform.mail.subject** (String) - notification subject
 * Group preferences
  * **documentchangeinform.creator** (booolean) - enable notifications for document creator
- * **documentchangeinform.lasteditor** (booolean) - same for last editor of document
- * **documentchangeinform.associated** (booolean) - same for everyone in target associations of document
- * **documentchangeinform.editors** (booolean) - and for version creators
- * **documentchangeinform.infavorites** (booolean) - for all who favorited this document (requires [alvex-infavorites-document-associtation](https://github.com/ITDSystems/alvex-infavorites-document-association) component)
+ * **documentchangeinform.lasteditor** (booolean) - enable notifications for last editor of document
+ * **documentchangeinform.associated** (booolean) - enable notification for everyone in target associations of document
+ * **documentchangeinform.editors** (booolean) - enable notification for all editors of document
+ * **documentchangeinform.infavorites** (booolean) - enable notification for all who favorited this document (requires [alvex-infavorites-document-associtation](https://github.com/ITDSystems/alvex-infavorites-document-association) component)
+
+Sample config:
+
+```
+documentchangeinform.mail.from=Alfresco instance <alvex@itdhq.com>
+documentchangeinform.mail.subject=Notification
+documentchangeinform.creator=true
+documentchangeinform.lasteditor=true
+documentchangeinform.associated=true
+documentchangeinform.editors=true
+documentchangeinform.infavorites=true
+```
 
 After starting Alfresco with installed extension you can find email templates at **Data Dictionary/Email Templates/Document Change Notification/**. Customize them if you need.
 
-Roadmap | TODO:
------
-* Investigate the possibility of repairing tests
-* Article
-* Inform about deletion
-* Add user notifications preferences
-* Add share extension for user preferences
-
-# Downloads
-
-Alvex component builds are automatically published to [nexus.itdhq.com](http://nexus.itdhq.com) by Travis CI.
-
-# Build
-
-To build Alvex follow [this guide](https://github.com/ITDSystems/alvex#build-component-from-source).
+**Warning!** Extension would not work without configured OutboundSMTP!
