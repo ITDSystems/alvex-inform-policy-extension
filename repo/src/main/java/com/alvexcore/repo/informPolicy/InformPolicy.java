@@ -30,7 +30,7 @@ import java.util.*;
 import org.alfresco.repo.admin.RepositoryState;
 
 /**
- * Created by malchun on 11/13/15.
+ * Created by azverev on 11/13/15.
  */
 public class InformPolicy
         implements AfterCreateVersionPolicy
