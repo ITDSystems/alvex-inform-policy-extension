@@ -43,6 +43,9 @@
         <property name="repositoryState">
             <ref bean="repositoryState" />
         </property>
+        <property name="preferenceService">
+            <ref bean="PreferenceService" />
+        </property>
 
 
         <property name="mailfrom">
