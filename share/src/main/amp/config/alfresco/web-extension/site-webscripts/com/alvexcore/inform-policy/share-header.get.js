@@ -4,7 +4,7 @@ if (headerMenu != null) {
         id: "HEADER_CUSTOM_PROFILE_LINK",
         name: "alfresco/menus/AlfMenuBarItem",
             config: {
-                label: "Inform Preferences",
+                label: "inform.preferences.header.label",
                 targetUrl: "hdp/ws/inform_policy_config"
             }
     });

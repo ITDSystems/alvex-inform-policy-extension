@@ -11,10 +11,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionService;
 import org.alfresco.service.cmr.preference.PreferenceService;
-import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.cmr.repository.*;
 import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.PersonService;
@@ -29,6 +26,8 @@ import org.apache.log4j.Logger;
 import java.io.Serializable;
 import java.util.*;
 import org.alfresco.repo.admin.RepositoryState;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by azverev on 11/13/15.
@@ -40,11 +39,11 @@ public class InformPolicy
     protected VersionService versionService;
     protected PersonService personService;
     protected PolicyComponent policyComponent;
-    protected PreferenceService preferenceService;
     protected NodeService nodeService;
     protected ServiceRegistry serviceRegistry;
     protected ActionService actionService;
     protected RepositoryState repositoryState;
+    protected ContentService contentService;
 
     private HashMap<String, String> templates;
     private String mailfrom;
@@ -60,7 +59,7 @@ public class InformPolicy
     public void setVersionService(VersionService versionService) {this.versionService = versionService; }
     public void setNodeService(NodeService nodeService) {this.nodeService = nodeService; }
     public void setPersonService(PersonService personService) {this.personService = personService; }
-    public void setPreferenceService(PreferenceService preferenceService) { this.preferenceService = preferenceService; }
+    public void setContentService(ContentService contentService) {this.contentService = contentService; }
     public void setActionService(ActionService actionService) {this.actionService = actionService; }
     public void setPolicyComponent(PolicyComponent policyComponent) {this.policyComponent = policyComponent; }
     public void setServiceRegistry(ServiceRegistry serviceRegistry) {this.serviceRegistry = serviceRegistry; }
@@ -119,8 +118,8 @@ public class InformPolicy
         // Version creator
         if (creator) {
             logger.debug("Notifying creator of the document");
-            if (null == preferenceService.getPreference(creatorname, creator_preference) ||
-                    "true" == preferenceService.getPreference(creatorname, creator_preference)) {
+            if (null == getPreference(creatorname, creator_preference) ||
+                    "true" == getPreference(creatorname, creator_preference)) {
                 NodeRef mailCreatorTemplate = getMailTemplate(templates.get("creator"));
                 sendMail(creatorname, mailCreatorTemplate, fortemplate);
                 informedUsers.add(creatorname);
@@ -130,8 +129,8 @@ public class InformPolicy
         // Last editor
         if (lasteditor) {
             logger.debug("Notifying last editor of the document");
-            if ((null == preferenceService.getPreference(lasteditorname, lasteditor_preference) ||
-                    "true" == preferenceService.getPreference(lasteditorname, lasteditor_preference)) &&
+            if ((null == getPreference(lasteditorname, lasteditor_preference) ||
+                    "true" == getPreference(lasteditorname, lasteditor_preference)) &&
                     !informedUsers.contains(lasteditorname)) {
 
                 NodeRef mailLastEditorTemplate = getMailTemplate(templates.get("lasteditor"));
@@ -304,11 +303,60 @@ public class InformPolicy
     private Set<String> getUnsubscribed(Set<String> users, String subscribe_preference) {
         Set<String> unsubscribed_users = new HashSet<>();
         for (String username: users) {
-            if (null != preferenceService.getPreference(username, creator_preference) &&
-                    "false" == preferenceService.getPreference(username, creator_preference)) {
+            if (null != getPreference(username, subscribe_preference) &&
+                    "false" == getPreference(username, subscribe_preference)) {
                 unsubscribed_users.add(username);
             }
         }
         return  unsubscribed_users;
     }
+
+
+    private JSONObject getPreferencesObject(String userName) throws JSONException
+    {
+        JSONObject jsonPrefs = null;
+
+        // Get the user node reference
+        NodeRef personNodeRef = this.personService.getPerson(userName);
+        if (personNodeRef == null)
+        {
+            throw new AlfrescoRuntimeException("Cannot get preferences for " + userName
+                    + " because he/she does not exist.");
+        }
+
+        // Check for preferences aspect
+        if (this.nodeService.hasAspect(personNodeRef, ContentModel.ASPECT_PREFERENCES)) {
+            // Get the preferences for this user
+            ContentReader reader = this.contentService.getReader(personNodeRef,
+                    ContentModel.PROP_PREFERENCE_VALUES);
+            if (reader != null)
+            {
+                jsonPrefs = new JSONObject(reader.getContentString());
+            }
+        }
+        return jsonPrefs;
+    }
+
+    private Serializable getPreference(String userName, String preferenceName)
+    {
+        String preferenceValue = null;
+        try
+        {
+            JSONObject jsonPrefs = getPreferencesObject(userName);
+            if(jsonPrefs != null)
+            {
+                if(jsonPrefs.has(preferenceName))
+                {
+                    preferenceValue = jsonPrefs.getString(preferenceName);
+                }
+            }
+        }
+        catch (JSONException exception)
+        {
+            throw new AlfrescoRuntimeException("Can not get preferences for " + userName + " because there was an error pasing the JSON data.", exception);
+        }
+
+        return preferenceValue;
+    }
+
 }

@@ -9,12 +9,10 @@ define(["dojo/_base/declare",
 
     constructor: function informPolicy_SetInformPolicyPreferencesService__constructor(args) {
       lang.mixin(this, args);
-      console.log("informPolicy_SetInformPolicyPreferencesService__constructor");
       this.alfSubscribe("SET_INFORM_POLICY_PREFERENCES_PUBLISH_TOPIC", lang.hitch(this, this.savePreferences));
     },
 
     savePreferences: function informPolicy_SetInformPolicyPreferencesService__savePreferences(payload) {
-        console.log(JSON.stringify(payload));
         /*
         my_payload = {preference:'com.itdhq.documentchangeinform.creator', value: true, alfTopic: 'SET_PREFERENCE'};
         var url = AlfConstants.PROXY_URI + "api/people/" + encodeURIComponent(AlfConstants.USERNAME) + "/preferences";
@@ -39,7 +37,6 @@ define(["dojo/_base/declare",
         this.alfPublish(topics.SET_PREFERENCE, {preference:'com.alvexcore.documentchangeinform.associated', value: payload.associated});
         this.alfPublish(topics.SET_PREFERENCE, {preference:'com.alvexcore.documentchangeinform.editor', value: payload.editor});
         this.alfPublish(topics.SET_PREFERENCE, {preference:'com.alvexcore.documentchangeinform.infavorites', value: payload.infavorites});
-        console.log("lol it works");
     }
   });
 });
