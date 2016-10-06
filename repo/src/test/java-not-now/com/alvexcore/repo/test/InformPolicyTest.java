@@ -3,7 +3,6 @@ package com.alvexcore.repo.test;
 /**
  * Created by malchun on 11/24/15.
  */
-
 import com.alvexcore.repo.InformPolicy;
 import com.tradeshift.test.remote.Remote;
 import com.tradeshift.test.remote.RemoteTestRunner;

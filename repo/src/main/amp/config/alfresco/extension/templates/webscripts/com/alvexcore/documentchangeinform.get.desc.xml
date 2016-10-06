@@ -1,0 +1,7 @@
+<webscript>
+    <shortname>documentchangeinform</shortname>
+    <description>Returns documentchangeinform flags values.</description>
+    <url>/informpolicy/documentchangeinform</url>
+    <authentication>user</authentication>
+    <format default="json">argument</format>
+</webscript>

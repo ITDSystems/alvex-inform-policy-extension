@@ -21,7 +21,7 @@
 	<!-- This is filtered by Maven at build time, so that module name is single sourced. -->
     <import resource="classpath:alfresco/module/${project.artifactId}/context/*-context.xml" />
 
-    <bean id="com.itdhq-InformPolicy" class="com.alvexcore.repo.informPolicy.InformPolicy" init-method="init">
+    <bean id="com.alvexcore.repo.informPolicy.InformPolicy" class="com.alvexcore.repo.informPolicy.InformPolicy" init-method="init">
         <property name="policyComponent">
             <ref bean="policyComponent" />
         </property>
@@ -42,6 +42,9 @@
         </property>
         <property name="repositoryState">
             <ref bean="repositoryState" />
+        </property>
+        <property name="contentService">
+            <ref bean="ContentService" />
         </property>
 
 
@@ -68,4 +71,6 @@
             <value>${documentchangeinform.infavorites}</value>
         </property>
     </bean>
+
+
 </beans>
