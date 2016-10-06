@@ -1,0 +1,6 @@
+<webscript>
+    <shortname>Inform Policy Config Page</shortname>
+    <description>Configuration page for user inform policy preferences customisation.</description>
+    <family>Share</family>
+    <url>/inform_policy_config</url>
+</webscript>
