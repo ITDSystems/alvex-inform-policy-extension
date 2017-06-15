@@ -278,7 +278,6 @@ public class InformPolicy
             logger.error("Can't send email notification! Bad template node!");
             return;
         }
-        try {
             Action mailAction = actionService.createAction(MailActionExecuter.NAME);
             mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, emailTemplateNodeRef);
             mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
@@ -294,10 +293,7 @@ public class InformPolicy
             templateModel.put("args", (Serializable) templateArgs);
             mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL, (Serializable) templateModel);
 
-            actionService.executeAction(mailAction, null);
-        } catch (Exception e) {
-            throw new AlfrescoRuntimeException("Can't send email!");
-        }
+            actionService.executeAction(mailAction, null, false, true);
     }
 
     private Set<String> getUnsubscribed(Set<String> users, String subscribe_preference) {
