@@ -51,4 +51,4 @@ documentchangeinform.infavorites=true
 
 After starting Alfresco with installed extension you can find email templates at **Data Dictionary/Email Templates/Document Change Notification/**. Customize them if you need.
 
-**Warning!** Extension would not work without configured OutboundSMTP!
+**Warning!** Do not forget to configure OutboundSMTP in alfresco-global.properties
