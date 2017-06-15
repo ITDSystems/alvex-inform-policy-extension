@@ -10,10 +10,8 @@ import org.alfresco.repo.version.VersionServicePolicies.AfterCreateVersionPolicy
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionService;
-import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.cmr.preference.PreferenceService;
+import org.alfresco.service.cmr.repository.*;
 import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.cmr.security.PersonService;
@@ -28,21 +26,24 @@ import org.apache.log4j.Logger;
 import java.io.Serializable;
 import java.util.*;
 import org.alfresco.repo.admin.RepositoryState;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
- * Created by malchun on 11/13/15.
+ * Created by azverev on 11/13/15.
  */
 public class InformPolicy
         implements AfterCreateVersionPolicy
 {
-    private Logger logger = Logger.getLogger(InformPolicy.class);
-    private VersionService versionService;
-    private PersonService personService;
-    private PolicyComponent policyComponent;
-    private NodeService nodeService;
-    private ServiceRegistry serviceRegistry;
-    private ActionService actionService;
+    protected Logger logger = Logger.getLogger(InformPolicy.class);
+    protected VersionService versionService;
+    protected PersonService personService;
+    protected PolicyComponent policyComponent;
+    protected NodeService nodeService;
+    protected ServiceRegistry serviceRegistry;
+    protected ActionService actionService;
     protected RepositoryState repositoryState;
+    protected ContentService contentService;
 
     private HashMap<String, String> templates;
     private String mailfrom;
@@ -58,6 +59,7 @@ public class InformPolicy
     public void setVersionService(VersionService versionService) {this.versionService = versionService; }
     public void setNodeService(NodeService nodeService) {this.nodeService = nodeService; }
     public void setPersonService(PersonService personService) {this.personService = personService; }
+    public void setContentService(ContentService contentService) {this.contentService = contentService; }
     public void setActionService(ActionService actionService) {this.actionService = actionService; }
     public void setPolicyComponent(PolicyComponent policyComponent) {this.policyComponent = policyComponent; }
     public void setServiceRegistry(ServiceRegistry serviceRegistry) {this.serviceRegistry = serviceRegistry; }
@@ -74,6 +76,12 @@ public class InformPolicy
 
     public static final QName infavorites_documents_association_qname = QName.createQName("http://itdhq.com/prefix/infav", "infavorites_documents_association");
     public static final QName infavorites_folders_association_qname = QName.createQName("http://itdhq.com/prefix/infav", "infavorites_folders_association");
+
+    protected static final String creator_preference = "com.alvexcore.documentchangeinform.creator";
+    protected static final String lasteditor_preference = "com.alvexcore.documentchangeinform.lasteditor";
+    protected static final String editor_preference = "com.alvexcore.documentchangeinform.editor";
+    protected static final String associated_preference = "com.alvexcore.documentchangeinform.associated";
+    protected static final String infavorites_preference = "com.alvexcore.documentchangeinform.infavorites";
 
     public void init()
     {
@@ -110,15 +118,21 @@ public class InformPolicy
         // Version creator
         if (creator) {
             logger.debug("Notifying creator of the document");
-            NodeRef mailCreatorTemplate = getMailTemplate(templates.get("creator"));
-            sendMail(creatorname, mailCreatorTemplate, fortemplate);
-            informedUsers.add(creatorname);
+            if (null == getPreference(creatorname, creator_preference) ||
+                    "true" == getPreference(creatorname, creator_preference)) {
+                NodeRef mailCreatorTemplate = getMailTemplate(templates.get("creator"));
+                sendMail(creatorname, mailCreatorTemplate, fortemplate);
+                informedUsers.add(creatorname);
+            }
         }
 
         // Last editor
         if (lasteditor) {
             logger.debug("Notifying last editor of the document");
-            if (!informedUsers.contains(lasteditorname)) {
+            if ((null == getPreference(lasteditorname, lasteditor_preference) ||
+                    "true" == getPreference(lasteditorname, lasteditor_preference)) &&
+                    !informedUsers.contains(lasteditorname)) {
+
                 NodeRef mailLastEditorTemplate = getMailTemplate(templates.get("lasteditor"));
                 sendMail(lasteditorname, mailLastEditorTemplate, fortemplate);
                 informedUsers.add(lasteditorname);
@@ -130,6 +144,7 @@ public class InformPolicy
             logger.debug("Notifying users associated with the document");
             Set<String> associatedusernames = getAssociatedUsers(versionableNode);
             associatedusernames.removeAll(informedUsers);
+            associatedusernames.removeAll(getUnsubscribed(associatedusernames, associated_preference));
             if (associatedusernames.size() > 0) {
                 NodeRef mailAssociatedTemplate = getMailTemplate(templates.get("associated"));
                 for (String user: associatedusernames)
@@ -146,6 +161,7 @@ public class InformPolicy
             Set<String> editornames = getEditors(versionableNode);
             logger.debug("Editors :" + editornames.toString());
             editornames.removeAll(informedUsers);
+            editornames.removeAll(getUnsubscribed(editornames, editor_preference));
             if (editornames.size() > 0) {
                 NodeRef mailEditorsTemplate = getMailTemplate(templates.get("editors"));
                 for (String user: editornames)
@@ -162,6 +178,7 @@ public class InformPolicy
             Set<String> favoritednames = getFavoritedUsers(versionableNode);
             logger.debug("Favorited :" + favoritednames.toString());
             favoritednames.removeAll(informedUsers);
+            favoritednames.removeAll(getUnsubscribed(favoritednames, infavorites_preference));
             if (favoritednames.size() > 0) {
                 NodeRef mailEditorsTemplate = getMailTemplate(templates.get("infavorites"));
                 for (String user: favoritednames)
@@ -278,4 +295,64 @@ public class InformPolicy
 
             actionService.executeAction(mailAction, null, false, true);
     }
+
+    private Set<String> getUnsubscribed(Set<String> users, String subscribe_preference) {
+        Set<String> unsubscribed_users = new HashSet<>();
+        for (String username: users) {
+            if (null != getPreference(username, subscribe_preference) &&
+                    "false" == getPreference(username, subscribe_preference)) {
+                unsubscribed_users.add(username);
+            }
+        }
+        return  unsubscribed_users;
+    }
+
+
+    private JSONObject getPreferencesObject(String userName) throws JSONException
+    {
+        JSONObject jsonPrefs = null;
+
+        // Get the user node reference
+        NodeRef personNodeRef = this.personService.getPerson(userName);
+        if (personNodeRef == null)
+        {
+            throw new AlfrescoRuntimeException("Cannot get preferences for " + userName
+                    + " because he/she does not exist.");
+        }
+
+        // Check for preferences aspect
+        if (this.nodeService.hasAspect(personNodeRef, ContentModel.ASPECT_PREFERENCES)) {
+            // Get the preferences for this user
+            ContentReader reader = this.contentService.getReader(personNodeRef,
+                    ContentModel.PROP_PREFERENCE_VALUES);
+            if (reader != null)
+            {
+                jsonPrefs = new JSONObject(reader.getContentString());
+            }
+        }
+        return jsonPrefs;
+    }
+
+    private Serializable getPreference(String userName, String preferenceName)
+    {
+        String preferenceValue = null;
+        try
+        {
+            JSONObject jsonPrefs = getPreferencesObject(userName);
+            if(jsonPrefs != null)
+            {
+                if(jsonPrefs.has(preferenceName))
+                {
+                    preferenceValue = jsonPrefs.getString(preferenceName);
+                }
+            }
+        }
+        catch (JSONException exception)
+        {
+            throw new AlfrescoRuntimeException("Can not get preferences for " + userName + " because there was an error pasing the JSON data.", exception);
+        }
+
+        return preferenceValue;
+    }
+
 }

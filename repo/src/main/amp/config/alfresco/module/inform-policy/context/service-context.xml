@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+    <bean id="webscript.com.alvexcore.documentchangeinform.get"
+          class="com.alvexcore.repo.informPolicy.webscript.DocumentChangeInformGet"
+          parent='webscript'>
+        <property name="creator">
+            <value>${documentchangeinform.creator}</value>
+        </property>
+        <property name="lasteditor">
+            <value>${documentchangeinform.lasteditor}</value>
+        </property>
+        <property name="editors">
+            <value>${documentchangeinform.editors}</value>
+        </property>
+        <property name="associated">
+            <value>${documentchangeinform.associated}</value>
+        </property>
+        <property name="infavorites">
+            <value>${documentchangeinform.infavorites}</value>
+        </property>
+    </bean>
+
+</beans>

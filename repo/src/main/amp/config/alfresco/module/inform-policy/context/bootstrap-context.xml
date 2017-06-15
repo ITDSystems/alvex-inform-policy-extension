@@ -8,18 +8,25 @@
 		 workflow, and loading custom content models.  -->
 
     <!-- Bootstrap -->
-    <bean id="com.alvexcore.inform-bootstrap"
-          parent="spacesStoreImporter">
-        <property name="useExistingStore">
-            <value>false</value>
+    <bean id="com.alvexcore.InformPolicyBootstrapPatch"
+      class="org.alfresco.repo.admin.patch.impl.GenericBootstrapPatch"
+      parent="basePatch" >
+        <property name="id"><value>com.alvexcore.InformPolicyBootstrapPatch</value></property>
+        <property name="description"><value>Import email templates.</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>100000</value></property>
+        <property name="importerBootstrap">
+            <ref bean="spacesBootstrap" />
         </property>
-        <property name="bootstrapViews">
-            <list>
-                <props>
-                    <prop key="path">/${spaces.company_home.childname}/${spaces.dictionary.childname}/${spaces.templates.email.childname}</prop>
-                    <prop key="location">alfresco/module/inform-policy/bootstrap/config_email_templates.xml</prop>
-                </props>
-            </list>
+        <property name="checkPath">
+            <value>/${spaces.company_home.childname}/${spaces.dictionary.childname}/${spaces.templates.email.childname}/cm:document_change_notification</value>
+        </property>
+        <property name="bootstrapView">
+            <props>
+                <prop key="path">/${spaces.company_home.childname}/${spaces.dictionary.childname}/${spaces.templates.email.childname}</prop>
+                <prop key="location">alfresco/module/inform-policy/bootstrap/config_email_templates.xml</prop>
+            </props>
         </property>
     </bean>
 
