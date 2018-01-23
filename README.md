@@ -10,20 +10,20 @@ This extension informs users about changes in documents they are watching for. I
 * all users mentioned in associations of the document
 * users favourited the document (requires [alvex-infavorites-document-associtation](https://github.com/ITDSystems/alvex-infavorites-document-association) component)
 
-Compatible with Alfresco 5.1.
+Compatible with Alfresco 5.1 and 5.2.
 
-This component depends on:
+This component requires:
 * [Alvex Utils](https://github.com/ITDSystems/alvex-utils)
 
-# Downloads
+# Using this project
 
-Download ready-to-use Alvex components via [Alvex](https://github.com/ITDSystems/alvex#downloads).
+Recommended way to use Alvex components is to include them as dependencies to your Maven project. Follow [this guide](https://github.com/ITDSystems/alvex#recommended-way-include-alvex-to-your-project-via-maven-configuration) to include this component to your project.
 
 # Build from source
 
 To build Alvex follow [this guide](https://github.com/ITDSystems/alvex#build-component-from-source).
 
-# Use
+# Quick Start
 
 All preferences could be set in **alfresco-global.properties**:
 
