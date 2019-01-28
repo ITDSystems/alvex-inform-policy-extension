@@ -1,3 +1,5 @@
+**This extension for Alfresco is obsolete and unsupported. Use it on your own risk.**
+
 [![Build Status](https://travis-ci.org/ITDSystems/alvex-inform-policy-extension.svg?branch=master)](https://travis-ci.org/ITDSystems/alvex-inform-policy-extension)
 
 Alvex inform policy extension
